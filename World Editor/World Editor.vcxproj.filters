@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Исходные файлы">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Файлы заголовков">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Файлы заголовков\Map">
+      <UniqueIdentifier>{f63d24f7-7034-4ce4-bbf1-d63211c66b8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\System">
+      <UniqueIdentifier>{d77f795c-bea3-46a0-b1df-0fd463ef6fae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\UI">
+      <UniqueIdentifier>{fe1c080d-8717-4122-ae7a-0baa27deb072}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Map.h">
+      <Filter>Файлы заголовков\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Файлы заголовков\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Define.h">
+      <Filter>Файлы заголовков\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Font.h">
+      <Filter>Файлы заголовков\System</Filter>
+    </ClInclude>
+    <ClInclude Include="System.h">
+      <Filter>Файлы заголовков\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Файлы заголовков\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>Файлы заголовков\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Cell.h">
+      <Filter>Файлы заголовков\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="PanelObject.h">
+      <Filter>Файлы заголовков\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Launcher.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldEditor.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_Manager.h">
+      <Filter>Файлы заголовков\UI</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
