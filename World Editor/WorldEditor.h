@@ -31,7 +31,7 @@ public:
 						}
 						else if (act == "Start") {
 							state = WorldEditor::STATE::EDITOR;
-							map.Create(v2i(10, 10), "test");
+							map.Create(v2i(50, 30), "test");
 						}
 						wnd.setView(cam);
 					}

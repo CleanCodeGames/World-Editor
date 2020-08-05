@@ -22,11 +22,11 @@ public:
 	vector<IMG> Region;
 
 	Texture() {
-		for (int i = 0; i < 48; i++) Terrain.push_back(Load("Map/terrain/terrain" + to_string(i) + ".png"));
+		for (int i = 0; i < 50; i++) Terrain.push_back(Load("Map/terrain/terrain" + to_string(i) + ".png"));
 		for (int i = 0; i < 3; i++) Border.push_back(Load("Map/border/border" + to_string(i) + ".png"));
 		for (int i = 0; i < 8; i++) Destructible.push_back(Load("Map/tree/tree" + to_string(i) + ".png"));
 		for (int i = 0; i < 10; i++) Grass.push_back(Load("Map/grass/grass" + to_string(i) + ".png"));
-		for (int i = 0; i < 1; i++) Decor.push_back(Load("Map/decor/decor" + to_string(i) + ".png"));
+		for (int i = 0; i < 19; i++) Decor.push_back(Load("Map/decor/decor" + to_string(i) + ".png"));
 		for (int i = 0; i < 1; i++) Unit.push_back(Load("Map/unit/unit" + to_string(i) + ".png"));
 		for (int i = 0; i < 1; i++) Flying.push_back(Load("Map/flying/flying" + to_string(i) + ".png"));
 		for (int i = 0; i < 1; i++) Region.push_back(Load("Map/region/region" + to_string(i) + ".png"));

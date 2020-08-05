@@ -57,12 +57,6 @@ std::ostream& operator << (std::ostream& out, const v2i& p)
 	return out;
 }
 
-const string& operator + (string s, int i)
-{
-	s += to_string(i);
-	return s;
-}
-
 std::ostream& operator << (std::ostream& out, const Shape& s)
 {
 	out << "Position: " << s.getPosition() << endl;

@@ -2,24 +2,6 @@
 #include "Cell.h"
 #include "UI_Manager.h"
 
-class HotKeyFastFunc : public B {
-public:
-	bool is_ctrl_pressed = false;
-	bool is_show_layer_all = false;
-
-	void Action() {
-		if (IsKeyPressed(Key::LControl)) is_ctrl_pressed = true;
-		if (IsKeyReleased(Key::LControl)) is_ctrl_pressed = false;
-		if (IsKeyPressed(Key::A)) is_show_layer_all = !is_show_layer_all;
-	}
-	HotKeyFastFunc() {
-
-	}
-	~HotKeyFastFunc() {
-
-	}
-};
-
 class Map : public B
 {
 private:
@@ -33,10 +15,8 @@ private:
 	bool m_is_created = false;
 	bool m_is_mouse_left_pressed = false;
 	bool m_is_mouse_right_pressed = false;
-	bool m_is_transparent_empty_cell = false;
-	bool m_is_transparent_greed_cell = false;
+	
 	UI_Manager m_ui_manager;
-	HotKeyFastFunc m_hot_key_fast_func;
 	sf::ConvexShape convex = sf::ConvexShape(size_t(4));
 	Color m_color_empty_cell = Color(255, 80, 255, 100);
 	Color m_color_cell_out = Color(45, 45, 45, 100);
@@ -119,7 +99,6 @@ public:
 
 	void Action() {
 		m_ui_manager.Action();
-		m_hot_key_fast_func.Action();
 		if (IsKeyPressed(Key::Num1)) m_layer.set(Layer::terrain);
 		if (IsKeyPressed(Key::Num2)) m_layer.set(Layer::grass);
 		if (IsKeyPressed(Key::Num3)) m_layer.set(Layer::border);
@@ -139,8 +118,8 @@ public:
 		if (IsMouseReleased(sf::Mouse::Right))	m_is_mouse_right_pressed = false;
 
 		if (IsKeyPressed(Key::T)) { // Прозрачность пустых ячеек
-			m_is_transparent_empty_cell = !m_is_transparent_empty_cell;
-			if (m_is_transparent_empty_cell) m_color_empty_cell = Color::Transparent;
+			m_ui_manager.m_is_transparent_empty_cell = !m_ui_manager.m_is_transparent_empty_cell;
+			if (m_ui_manager.m_is_transparent_empty_cell) m_color_empty_cell = Color::Transparent;
 			else m_color_empty_cell = Color(255, 80, 255, 100);
 
 			for (int i = 0; i < m_layer.ALL; i++) {
@@ -152,8 +131,8 @@ public:
 			}
 		}
 		if (IsKeyPressed(Key::G)) { // Прозрачность сетки
-			m_is_transparent_greed_cell = !m_is_transparent_greed_cell;
-			if (m_is_transparent_greed_cell) m_color_cell_out = Color::Transparent;
+			m_ui_manager.m_is_transparent_greed_cell = !m_ui_manager.m_is_transparent_greed_cell;
+			if (m_ui_manager.m_is_transparent_greed_cell) m_color_cell_out = Color::Transparent;
 			else m_color_cell_out = Color(45, 45, 45, 100);
 			for (int i = 0; i < m_layer.ALL; i++) {
 				for (auto& object : m_vec_object[i]) {
@@ -177,7 +156,8 @@ public:
 					}
 					else if (m_is_mouse_right_pressed) {
 						if (object->GetNameID() != "Empty") {
-							object = std::move(make_unique<GameObject>(CreateShape(GetFocusCellPosition(), v2f(CELL_SIZE, CELL_SIZE), -1, m_color_empty_cell, m_color_cell_out), m_layer.get, "Empty"));
+							object = std::move(make_unique<GameObject>(
+								CreateShape(GetFocusCellPosition(), v2f(CELL_SIZE, CELL_SIZE), -1, m_color_empty_cell, m_color_cell_out), m_layer.get, "Empty"));
 						}
 					}
 				}
@@ -186,16 +166,14 @@ public:
 	}
 
 	void Draw() {
-		if (m_hot_key_fast_func.is_show_layer_all == true) {
+		if (m_ui_manager.is_show_layer_all == true) {
 			for (int i = 0; i < m_layer.ALL; i++) {
-				for (auto& object : m_vec_object[i]) 
-				{
+				for (auto& object : m_vec_object[i]) {
 					object->Draw();
 				}
 			}
 		}
-		else 
-		{
+		else {
 			for (auto& object : m_vec_object[m_layer.get])
 				object->Draw();
 		}

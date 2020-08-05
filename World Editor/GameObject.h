@@ -52,7 +52,7 @@ public:
 	virtual void Action() override {
 		// Do nothing...
 	}
-	virtual void Draw() override {
+	virtual void Draw() override { 
 		wnd.draw(m_shape);
 	}
 	virtual ~GameObject() override {

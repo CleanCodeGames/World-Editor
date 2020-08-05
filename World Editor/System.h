@@ -1,14 +1,13 @@
 #pragma once
 #include "Texture.h"
 #include "Font.h"
-// TEST
 
 class System
 {
 public:
-	static const sf::FloatRect GetVisible() {
-		return sf::FloatRect(cam.getCenter().x - (scr_W / 2), cam.getCenter().y - (scr_H / 2), scr_W, scr_H);
-	}
+	//static const sf::FloatRect GetVisible() {
+	//	return sf::FloatRect(cam.getCenter().x - (scr_W / 2), cam.getCenter().y - (scr_H / 2), scr_W, scr_H);
+	//}
 	static void SystemUpdate() {
 		cur_p = wnd.mapPixelToCoords(sf::Mouse::getPosition(wnd));
 		cur_p_wnd = v2f(sf::Mouse::getPosition(wnd));
@@ -137,6 +136,12 @@ public:
 		if (event.type == sf::Event::MouseButtonPressed)
 			if (event.key.code == code) return true;
 		return false;
+	}
+
+	static bool IsMouseWheelUp(const sf::Mouse::Wheel code)
+	{
+		if (event.mouseWheel.x == code) return true;
+			return false;
 	}
 
 	System(void) {}

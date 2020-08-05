@@ -166,7 +166,7 @@ public:
 	PanelObjectTerrain(v2f pos = v2f()) : PanelObject(pos)
 	{
 		type = TypeGameObject::Terrain;
-		but_nums = 48;
+		but_nums = texture.Terrain.size();
 		for (int i = 0; i < but_nums; i++) {
 			const Shape& shape = CreateShape(vec_button_pos[i], v2f(CELL_SIZE, CELL_SIZE), texture.Terrain[i]);
 			vec_button.push_back(make_unique<ButtonClickActive>(ButtonClickActive(shape, btncmd_Terrain + to_string(i))));
@@ -294,7 +294,7 @@ public:
 	PanelObjectDecor(v2f pos = v2f()) : PanelObject(pos)
 	{
 		type = TypeGameObject::Decor;
-		but_nums = 1;
+		but_nums = texture.Decor.size();
 		for (int i = 0; i < but_nums; i++) {
 			const Shape& shape = CreateShape(vec_button_pos[i], v2f(CELL_SIZE, CELL_SIZE), texture.Decor[i]);
 			vec_button.push_back(make_unique<ButtonClickActive>(ButtonClickActive(shape, btncmd_Decor + to_string(i))));
