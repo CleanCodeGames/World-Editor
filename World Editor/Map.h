@@ -10,6 +10,7 @@ private:
 	string m_name;
 	v2i m_size;
 	v2f m_center_map;
+	v2f m_click_position;
 	vector<Cell> m_vec_cell[Layer::ALL];
 	vector<unique_ptr<AbstractGameObject>> m_vec_object[Layer::ALL];
 	bool m_is_created = false;
@@ -18,8 +19,10 @@ private:
 	
 	UI_Manager m_ui_manager;
 	sf::ConvexShape convex = sf::ConvexShape(size_t(4));
-	Color m_color_empty_cell = Color(255, 80, 255, 100);
-	Color m_color_cell_out = Color(45, 45, 45, 100);
+	Color m_color_empty_cell = Color(100, 100, 100, 100);
+	Color m_color_cell_out = Color(45, 70, 45);
+
+	TypeMode m_type_mode = TypeMode::DRAW;
 
 public:
 
@@ -55,7 +58,7 @@ public:
 		}
 		// Заполняем вектора пустыми ячейками
 		for (int i = 0; i < m_size.y; i++) {
-			for (int j = 0; j < m_size.y; j++) {
+			for (int j = 0; j < m_size.x; j++) {
 				for (int x = 0; x < Layer::ALL; x++) {
 					m_vec_cell[x].push_back(Cell(v2f(j, i) * CELL_SIZE, x));
 					m_vec_object[x].push_back(make_unique<GameObject>(CreateShape(m_vec_cell[x].back().GetPosition(), v2f(CELL_SIZE, CELL_SIZE), -1, m_color_empty_cell, m_color_cell_out), x, "Empty"));
@@ -83,7 +86,7 @@ public:
 		return m_shape_pick_cell.getPosition();
 	}
 
-	// Проверка фокуса на объекте
+	// Проверка фокуса на объекте панели объектов
 	const bool IsFocusObject(unique_ptr<AbstractGameObject>& obj) {
 		return obj->GetShape().getGlobalBounds().contains(cur_p);
 	}
@@ -93,31 +96,9 @@ public:
 		return sf::FloatRect(cell.GetPosition() - v2f(CELL_SIZE / 2, CELL_SIZE / 2), v2f(CELL_SIZE, CELL_SIZE)).contains(cur_p);
 	}
 
-	void ActionHotKeyFastFunction() {
-
-	}
-
-	void Action() {
-		m_ui_manager.Action();
-		if (IsKeyPressed(Key::Num1)) m_layer.set(Layer::terrain);
-		if (IsKeyPressed(Key::Num2)) m_layer.set(Layer::grass);
-		if (IsKeyPressed(Key::Num3)) m_layer.set(Layer::border);
-		if (IsKeyPressed(Key::Num4)) m_layer.set(Layer::decor);
-		if (IsKeyPressed(Key::Num5)) m_layer.set(Layer::decor);
-		if (IsKeyPressed(Key::Num6)) m_layer.set(Layer::unit);
-		if (IsKeyPressed(Key::Num7)) m_layer.set(Layer::flying);
-		if (IsKeyPressed(Key::Num8)) m_layer.set(Layer::region);
-
-		for (auto& cell : m_vec_cell[m_layer.get]) {
-			if (IsFocusCell(cell)) m_shape_pick_cell.setPosition(cell.GetPosition());
-		}
-
-		if (IsMousePressed(sf::Mouse::Left) && !m_ui_manager.m_panel_object->GetIsFocus())	m_is_mouse_left_pressed = true; 
-		if (IsMousePressed(sf::Mouse::Right) && !m_ui_manager.m_panel_object->GetIsFocus())	m_is_mouse_right_pressed = true;
-		if (IsMouseReleased(sf::Mouse::Left))	m_is_mouse_left_pressed = false;
-		if (IsMouseReleased(sf::Mouse::Right))	m_is_mouse_right_pressed = false;
-
-		if (IsKeyPressed(Key::T)) { // Прозрачность пустых ячеек
+	// Прозрачность пустых ячеек
+	void ActTransperentEmptyCell() {
+		if (IsKeyPressed(Key::T)) { 
 			m_ui_manager.m_is_transparent_empty_cell = !m_ui_manager.m_is_transparent_empty_cell;
 			if (m_ui_manager.m_is_transparent_empty_cell) m_color_empty_cell = Color::Transparent;
 			else m_color_empty_cell = Color(255, 80, 255, 100);
@@ -130,28 +111,72 @@ public:
 				}
 			}
 		}
-		if (IsKeyPressed(Key::G)) { // Прозрачность сетки
-			m_ui_manager.m_is_transparent_greed_cell = !m_ui_manager.m_is_transparent_greed_cell;
-			if (m_ui_manager.m_is_transparent_greed_cell) m_color_cell_out = Color::Transparent;
-			else m_color_cell_out = Color(45, 45, 45, 100);
+	}
+	// Прозрачность сетки
+	void ActTransparentGreedCell() {
+		if (IsKeyPressed(Key::G)) { 
+			m_ui_manager.m_is_show_greed_cell = !m_ui_manager.m_is_show_greed_cell;
+			if (m_ui_manager.m_is_show_greed_cell) m_color_cell_out = Color(45, 45, 45, 100);
+			else m_color_cell_out = Color::Transparent;
 			for (int i = 0; i < m_layer.ALL; i++) {
 				for (auto& object : m_vec_object[i]) {
 					object->GetShape().setOutlineColor(m_color_cell_out);
 				}
 			}
 		}
+	}
+	// Выбор слоя редактирования
+	void  ActSelectionLayer() {
+		if (IsKeyPressed(Key::Num1)) m_layer.set(Layer::terrain);
+		if (IsKeyPressed(Key::Num2)) m_layer.set(Layer::grass);
+		if (IsKeyPressed(Key::Num3)) m_layer.set(Layer::border);
+		if (IsKeyPressed(Key::Num4)) m_layer.set(Layer::decor);
+		if (IsKeyPressed(Key::Num5)) m_layer.set(Layer::decor);
+		if (IsKeyPressed(Key::Num6)) m_layer.set(Layer::unit);
+		if (IsKeyPressed(Key::Num7)) m_layer.set(Layer::flying);
+		if (IsKeyPressed(Key::Num8)) m_layer.set(Layer::region);
+	}
+
+	// Обработчки горячих клавиш
+	void ActionHotKeyFastFunction() {
+		ActSelectionLayer();
+		ActTransperentEmptyCell();
+		ActTransparentGreedCell();
+	}
+
+	void Action() {
+		m_ui_manager.Action();
+		ActionHotKeyFastFunction();
+
+		for (auto& cell : m_vec_cell[m_layer.get]) {
+			if (IsFocusCell(cell)) m_shape_pick_cell.setPosition(cell.GetPosition());
+		}
+		
+		switch (m_type_mode)
+		{
+		case TypeMode::DRAW:
+			if (IsMousePressed(sf::Mouse::Left) && !m_ui_manager.m_panel_object->GetIsFocus()) m_is_mouse_left_pressed = true;
+			if (IsMousePressed(sf::Mouse::Right) && !m_ui_manager.m_panel_object->GetIsFocus())	m_is_mouse_right_pressed = true;
+			if (IsMouseReleased(sf::Mouse::Left))	m_is_mouse_left_pressed = false;
+			if (IsMouseReleased(sf::Mouse::Right))	m_is_mouse_right_pressed = false;
+			break;
+		case TypeMode::EDIT:
+			break;
+		default:
+			break;
+		}
 		if (IsKeyPressed(Key::Q)) system("cls");
 	}
 
-	void Update() {
-		m_ui_manager.Update();
-		for (auto& object : m_vec_object[m_layer.get]) {
-			if (IsFocusObject(object)) {
-				if (object->GetLayer() == m_ui_manager.m_panel_object->GetSelectObjectLayerNum()) {
-					if (m_is_mouse_left_pressed) {
-						if (object->GetNameID() != m_ui_manager.m_panel_object->GetSelectedObjectNameID()) {
-							object = std::move(m_ui_manager.m_panel_object->GetSelectedObject());
-							object->GetShape().setPosition(GetFocusCellPosition());
+	// Вставка и удаление объектов
+	void UpdPasteAndRemoveObject() {
+		for (auto& object : m_vec_object[m_layer.get]) {														// Проходимся по всем ячейкам текущего слоя
+			if (IsFocusObject(object)) {																		// Если курсор попадает в ячейку
+				if (object->GetLayer() == m_ui_manager.m_panel_object->GetSelectObjectLayerNum()) {				// Если номер слоя объекта в ячейке и выбранного объекта из панели одинаковые
+					if (m_is_mouse_left_pressed) {																// Если левый клик мышки зажат
+						if (object->GetNameID() != m_ui_manager.m_panel_object->GetSelectedObjectNameID()) {	// Если уникальный идентификатор не одинаковый
+							object = std::move(m_ui_manager.m_panel_object->GetSelectedObject());				// Меняем объект в ячейке на выбранный объект из панели
+							object->GetShape().setPosition(GetFocusCellPosition());								// Ставим объект ровно в позицию ячейки
 						}
 					}
 					else if (m_is_mouse_right_pressed) {
@@ -165,11 +190,29 @@ public:
 		}
 	}
 
+	void Update() {
+		m_ui_manager.Update();
+		switch (m_type_mode)
+		{
+		case TypeMode::DRAW:
+			UpdPasteAndRemoveObject();
+			break;
+		case TypeMode::EDIT: break;
+		default: break;
+		}
+	}
+
 	void Draw() {
-		if (m_ui_manager.is_show_layer_all == true) {
+		if (m_ui_manager.is_show_layer_all == true) { // Если отобразить все слои
 			for (int i = 0; i < m_layer.ALL; i++) {
 				for (auto& object : m_vec_object[i]) {
-					object->Draw();
+					if (i == 0 && object->GetNameID() == "Empty") {
+						object->Draw();
+					}
+					else if (object->GetNameID() != "Empty")
+					{
+						object->Draw();
+					}
 				}
 			}
 		}

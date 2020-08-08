@@ -61,5 +61,8 @@
     <ClInclude Include="UI_Manager.h">
       <Filter>Файлы заголовков\UI</Filter>
     </ClInclude>
+    <ClInclude Include="SelectorTypeEdit.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

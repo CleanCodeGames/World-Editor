@@ -157,6 +157,7 @@
     <ClInclude Include="Map.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="PanelObject.h" />
+    <ClInclude Include="SelectorTypeEdit.h" />
     <ClInclude Include="System.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="UI_Manager.h" />

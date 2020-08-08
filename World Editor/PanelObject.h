@@ -2,34 +2,59 @@
 #include "GameObject.h"
 #include "Button.h"
 
-class AbstractPanelObject : public B
+class AbstractPanel : public B
+{
+protected:
+
+	Shape m_shape;
+	vector<unique_ptr<AbstractButton>> vec_button;
+	vector<v2f> vec_button_pos;
+	bool m_is_focus_panel = false;
+
+public:
+
+	AbstractPanel() {
+	}
+	virtual void Update() = 0;
+	virtual void Action() = 0;
+	virtual void Draw() = 0;
+	virtual void UpdateSelectedObject() = 0;
+	virtual void DrawSelectedObject() = 0;
+	virtual void ActionSelectedObject() = 0;
+
+	virtual const v2f GetPosition() {
+		return m_shape.getPosition();
+	}
+	virtual const bool GetIsFocus() {
+		return m_is_focus_panel;
+	}
+	virtual ~AbstractPanel() {
+
+	}
+};
+
+class BasePanelObject : public AbstractPanel
 {
 protected:
 	using TGO = TypeGameObject;
 	TGO type = TGO::Abstract;
-	Shape m_shape, m_shape_head;
+	Shape m_shape_head;
 	vector<unique_ptr<AbstractButton>> vec_button;
+	vector<v2f> vec_button_pos;
 	bool m_is_object_picked = false;
-	bool m_is_focus_panel = false;
 	bool m_is_focus_head = false;
 	bool m_is_panel_move = false;
 	int but_nums = 0;
-	vector<v2f> vec_button_pos;
+	
 	static unique_ptr<AbstractGameObject> m_selected_object;
 
 public:
 	
 
-	AbstractPanelObject() {
+	BasePanelObject() {
 	}
-	virtual void Update()	= 0;
-	virtual void Action()	= 0;
-	virtual void Draw()		= 0;
-	virtual void UpdateSelectedObject()	= 0;
-	virtual void DrawSelectedObject()	= 0;
-	virtual void ActionSelectedObject()	= 0;
 
-	virtual const v2f GetPosition() {
+	virtual const v2f GetPosition() override {
 		return m_shape_head.getPosition();
 	}
 	virtual unique_ptr<AbstractGameObject> GetSelectedObject() {
@@ -52,21 +77,18 @@ public:
 			default:				return make_unique<GameObject>(shape, layer, "Empty");		break;
 		}
 	}
-	virtual const bool GetIsFocus() {
-		return m_is_focus_panel;
-	}
 	virtual const string GetSelectedObjectNameID() {
 		return m_selected_object->GetNameID();
 	}
 	virtual const uint GetSelectObjectLayerNum() {
 		return m_selected_object->GetLayer();
 	}
-	virtual ~AbstractPanelObject() {
+	virtual ~BasePanelObject() {
 	}
 };
-unique_ptr<AbstractGameObject> AbstractPanelObject::m_selected_object;
+unique_ptr<AbstractGameObject> BasePanelObject::m_selected_object;
 
-class PanelObject : public AbstractPanelObject
+class PanelObject : public BasePanelObject
 {
 private:
 	void ButtonPositionUpdate() {
@@ -90,9 +112,9 @@ public:
 	PanelObject(v2f pos = v2f()) : head_size(252, 24), panel_size(252, 504) {
 		type = TypeGameObject::Abstract;
 		m_picked_button_num = 0;
-		if (pos == v2f()) head_position = v2f(scr_W - head_size.x / 2, head_size.y / 2);
+		if (pos == v2f()) head_position = v2f(scr_W - head_size.x / 2, head_size.y / 2 + 98);
 		else head_position = pos;
-		panel_position = v2f(head_position.x, head_position.y + (head_size.y / 2) + (panel_size.y / 2));
+		panel_position = v2f(head_position.x, head_position.y + (head_size.y / 2) + (panel_size.y / 2) - 2);
 		m_shape_head = CreateShape(head_position, head_size, -2, Color(80, 80, 80), Color(40, 40, 40));
 		m_shape = CreateShape(panel_position, panel_size, -2, Color(80, 80, 80), Color(40, 40, 40));
 		m_is_object_picked = true;
@@ -112,9 +134,9 @@ public:
 			head_position = cur_p_wnd;
 			if (head_position.x > (B::scr_W - head_size.x / 2)) head_position.x = (B::scr_W - head_size.x / 2);
 			else if (head_position.x < head_size.x / 2) head_position.x = head_size.x / 2;
-			if (head_position.y < head_size.y / 2) head_position.y = head_size.y / 2;
+			if (head_position.y < head_size.y / 2 + 98) head_position.y = head_size.y / 2 + 98;
 			else if (head_position.y > B::scr_H * 0.9) head_position.y = B::scr_H * 0.9;
-			panel_position = v2f(head_position.x, head_position.y + (head_size.y / 2) + (panel_size.y / 2));
+			panel_position = v2f(head_position.x, head_position.y + (head_size.y / 2) + (panel_size.y / 2) - 2);
 			m_shape_head.setPosition(head_position);
 			m_shape.setPosition(panel_position);
 			ButtonPositionUpdate();
