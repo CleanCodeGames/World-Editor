@@ -3,7 +3,9 @@
 // Тип режима редактирования карты
 enum class TypeMode {
 	DRAW = 0u,
-	EDIT = 1u
+	EDIT = 1u,
+	SAVE = 2u,
+	HELP = 3u
 };
 
 // Тип всплывающих настроек для панели редактирования объекта
@@ -14,7 +16,7 @@ enum class TypeEditPickedObject {
 	WATER
 };
 
-class BasePanelSelectorTypeEdit : public B
+class BaseTopPanel : public B
 {
 protected:
 
@@ -32,7 +34,7 @@ public:
 	using TM = TypeMode;
 	TM m_type_mode = TM::DRAW;
 
-	BasePanelSelectorTypeEdit() {
+	BaseTopPanel() {
 	}
 	virtual vector<unique_ptr<AbstractButton>>& GetButtonVector() {
 		return vec_button;
@@ -59,29 +61,32 @@ public:
 
 		return m_is_focus_panel;
 	}
-	virtual ~BasePanelSelectorTypeEdit() {
+	virtual ~BaseTopPanel() {
 
 	}
 };
 
-class PanelSelectorTypeEdit : public BasePanelSelectorTypeEdit
+class TopPanel : public BaseTopPanel
 {
 public:
 
-	PanelSelectorTypeEdit(v2f pos = v2f()) {
+	TopPanel(v2f pos = v2f()) {
 		m_panel_size = v2f(scr_W, 100);
 		if (pos == v2f()) {
 			m_shape = CreateShape(v2f(scr_W/2, 50), m_panel_size, -2, Color(80, 80, 80), Color(40, 40, 40));
 			v2f button_size = v2f(48,48);
 			v2f half_size = button_size / 2.f;
 			vec_button.push_back(make_unique<ButtonClickActive>(CreateShape(v2f(2 + half_size.x, 2 + half_size.y), button_size, texture.Edit[0]), "draw"));
-			vec_button.push_back(make_unique<ButtonClickActive>(CreateShape(v2f(2 + half_size.x, half_size.y + button_size.y + 2), button_size, texture.Edit[1]), "edit"));
+			vec_button.push_back(make_unique<ButtonClickActive>(CreateShape(v2f(2 + half_size.x, half_size.y + button_size.y + 2), button_size, texture.Edit[2]), "edit"));
+			vec_button.push_back(make_unique<ButtonClickActive>(CreateShape(v2f(2 + half_size.x + button_size.x + 2, half_size.y), button_size, texture.Edit[3]), "save"));
+			vec_button.push_back(make_unique<ButtonClickActive>(CreateShape(v2f(2 + half_size.x + button_size.x + 2, half_size.y + button_size.y + 2), button_size, texture.Edit[4]), "help"));
+			vec_button.push_back(make_unique<ButtonClickActive>(CreateShape(v2f(scr_W - half_size.x - 2, half_size.y + 2), button_size, texture.Edit[5]), "exit"));
 		}
 		m_shape_secelted_mode_ico_on_panel = CreateShape(vec_button[0]->GetShape().getPosition(), vec_button[0]->GetShape().getSize(), -2, Color::Transparent, Color::Yellow);
 		m_shape_selected_mode_ico_on_cursor = CreateShape(cur_p, v2f(vec_button[0]->GetShape().getSize()), texture.Edit[2]);
 	}
 	virtual void Update() override {
-		BasePanelSelectorTypeEdit::Update();
+		BaseTopPanel::Update();
 		static float alpha_rotation = 0;
 		alpha_rotation += 0.1f;
 		m_shape_selected_mode_ico_on_cursor.setRotation(cos(alpha_rotation) * 46);
@@ -100,6 +105,18 @@ public:
 					m_shape_selected_mode_ico_on_cursor = CreateShape(cur_p, v2f(button->GetShape().getSize()), texture.Edit[2]);
 					m_type_mode = TM::EDIT;
 				}
+				else if (button->GetActionId() == "save") {
+					m_type_mode = TM::SAVE;
+					cout << "Save\n";
+				}
+				else if (button->GetActionId() == "help") {
+					m_type_mode = TM::HELP;
+					cout << "Help\n";
+				}
+				else if (button->GetActionId() == "exit") {
+					wnd.close();
+					cout << "Exit\n";
+				}
 			}
 		}
 	}
@@ -112,7 +129,7 @@ public:
 		wnd.draw(m_shape_secelted_mode_ico_on_panel);
 	}
 
-	virtual ~PanelSelectorTypeEdit() {
+	virtual ~TopPanel() {
 
 	}
 };

@@ -9,6 +9,8 @@ public:
 	//	return sf::FloatRect(cam.getCenter().x - (scr_W / 2), cam.getCenter().y - (scr_H / 2), scr_W, scr_H);
 	//}
 	static void SystemUpdate() {
+		time = float(clock.getElapsedTime().asMicroseconds()) / 1000.f;
+		clock.restart();
 		cur_p = wnd.mapPixelToCoords(sf::Mouse::getPosition(wnd));
 		cur_p_wnd = v2f(sf::Mouse::getPosition(wnd));
 		cam_p = cam.getCenter();
@@ -160,7 +162,7 @@ public:
 			cur_p_wnd = v2f(0, 0);
 			wnd.setView(cam);
 			wnd.setMouseCursorVisible(true);
-			wnd.setFramerateLimit(30);
+			//wnd.setFramerateLimit(30);
 			srand(::time(0));
 		}
 	}
@@ -177,6 +179,7 @@ public:
 	static v2f cur_p;
 	static v2f cur_p_wnd;
 	static constexpr float CELL_SIZE = 48.f; // Размер ячейки на карте
+	static float time;
 
 	static const string btncmd_Terrain;
 	static const string btncmd_Grass;
@@ -186,6 +189,9 @@ public:
 	static const string btncmd_Unit;
 	static const string btncmd_Flying;
 	static const string btncmd_Region;
+
+	private:
+		static sf::Clock clock;
 };
 
 const string B::btncmd_Terrain			= "Terrain_";
@@ -207,3 +213,5 @@ int						B::scr_H;
 v2f						B::cam_p;
 v2f						B::cur_p;
 v2f						B::cur_p_wnd;
+float					B::time;
+sf::Clock				B::clock;

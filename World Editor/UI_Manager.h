@@ -11,9 +11,11 @@ private:
 	sf::Text m_text_show_layer_all;
 	sf::Text m_text_show_greed;
 	sf::Text m_text_empty_cell;
-	
+	sf::Text m_text_fps_counter;
+	float m_sec_timer = 0;
+	int m_fps_counter = 0;
 	bool is_ctrl_pressed = false;
-	
+	uint TEXT_SIZE = 20;
 	double m_cam_zoom = 1.0;
 
 	void ZoomCamWheel()
@@ -42,7 +44,7 @@ private:
 
 public:
 
-	unique_ptr<BasePanelSelectorTypeEdit> m_panel_selector_type_edit;
+	unique_ptr<BaseTopPanel> m_panel_top;
 	unique_ptr<BasePanelObject> m_panel_object;
 	bool is_show_layer_all = false;
 	bool m_is_transparent_empty_cell = false;
@@ -50,9 +52,9 @@ public:
 
 	UI_Manager() {
 		m_panel_object = std::move(make_unique<PanelObjectTerrain>());
-		m_panel_selector_type_edit = std::move(make_unique<PanelSelectorTypeEdit>());
+		m_panel_top = std::move(make_unique<TopPanel>());
 		// Текст Текущий слой и ID-name выбранного объект
-		const int TEXT_SIZE = 20;
+		
 		m_text_current_layer = CreateText(v2f(), TEXT_SIZE, "CURRENT LAYER: " + to_string(m_panel_object->GetSelectObjectLayerNum()) + " - " + m_panel_object->GetSelectedObjectNameID(), font.common, sf::Color::Yellow);
 		m_text_current_layer.setPosition(v2f(m_text_current_layer.getGlobalBounds().width/2, m_text_current_layer.getGlobalBounds().height/2 + 100));
 		// Текст зум камеры
@@ -67,14 +69,27 @@ public:
 		// Текст "Отобрвзить пустые клетки"
 		m_text_empty_cell = CreateText(v2f(), TEXT_SIZE, "SHOW EMPTY CELL: " + str_off_or_on(m_is_transparent_empty_cell), font.common, sf::Color::Yellow);
 		m_text_empty_cell.setPosition(v2f(m_text_empty_cell.getGlobalBounds().width / 2, m_text_empty_cell.getGlobalBounds().height / 2 + 200));
+		// Счётчик FPS
+		m_text_fps_counter = CreateText(v2f(), TEXT_SIZE, "FPS: " + to_string(m_fps_counter), font.common, sf::Color::Yellow);
+		m_text_fps_counter.setPosition(v2f(m_text_fps_counter.getGlobalBounds().width / 2, m_text_fps_counter.getGlobalBounds().height / 2 + 225));
 	}
 
 	virtual void Update() {
+		if (m_sec_timer < 1000.f) {
+			m_sec_timer += time;
+			m_fps_counter++;
+		}
+		else {
+			m_text_fps_counter.setString("FPS: " + to_string(m_fps_counter));
+			m_sec_timer = 0;
+			m_fps_counter = 0;
+		}
+
 		wnd.setView(wnd.getDefaultView());
-		switch (m_panel_selector_type_edit->m_type_mode)
+		switch (m_panel_top->m_type_mode)
 		{
 		case TypeMode::DRAW: m_panel_object->Update(); break;
-		case TypeMode::EDIT: m_panel_selector_type_edit->Update(); break;
+		case TypeMode::EDIT: m_panel_top->Update(); break;
 		default: break;
 		}
 		// Экранная обработка
@@ -84,9 +99,9 @@ public:
 
 	void Action() {
 		wnd.setView(wnd.getDefaultView());
-		m_panel_selector_type_edit->Action();
+		m_panel_top->Action();
 
-		switch (m_panel_selector_type_edit->m_type_mode)
+		switch (m_panel_top->m_type_mode)
 		{
 		case TypeMode::DRAW: m_panel_object->Action(); break;
 		case TypeMode::EDIT: break;
@@ -123,24 +138,25 @@ public:
 	}
 
 	void Draw() {
-		switch (m_panel_selector_type_edit->m_type_mode)
+		switch (m_panel_top->m_type_mode)
 		{
 		case TypeMode::DRAW:  m_panel_object->DrawSelectedObject(); break;
-		case TypeMode::EDIT: m_panel_selector_type_edit->DrawSelectedObject(); break;
+		case TypeMode::EDIT: m_panel_top->DrawSelectedObject(); break;
 		default: break;
 		}
 		// Отображение элементов интерфейса
 		
 		wnd.setView(wnd.getDefaultView());
-		if (m_panel_selector_type_edit->m_type_mode == TypeMode::DRAW) {
+		if (m_panel_top->m_type_mode == TypeMode::DRAW) {
 			m_panel_object->Draw();
 		}
-		m_panel_selector_type_edit->Draw();
+		m_panel_top->Draw();
 		wnd.draw(m_text_current_layer);
 		wnd.draw(m_text_cam_scale);
 		wnd.draw(m_text_show_layer_all);
 		wnd.draw(m_text_show_greed);
 		wnd.draw(m_text_empty_cell);
+		wnd.draw(m_text_fps_counter);
 		wnd.setView(cam);
 	}
 

@@ -116,7 +116,7 @@ public:
 	void ActTransparentGreedCell() {
 		if (IsKeyPressed(Key::G)) { 
 			m_ui_manager.m_is_show_greed_cell = !m_ui_manager.m_is_show_greed_cell;
-			if (m_ui_manager.m_is_show_greed_cell) m_color_cell_out = Color(45, 45, 45, 100);
+			if (m_ui_manager.m_is_show_greed_cell) m_color_cell_out = Color(45, 70, 45);
 			else m_color_cell_out = Color::Transparent;
 			for (int i = 0; i < m_layer.ALL; i++) {
 				for (auto& object : m_vec_object[i]) {
@@ -157,13 +157,13 @@ public:
 		case TypeMode::DRAW:
 			if (IsMousePressed(sf::Mouse::Left)
 				&& !m_ui_manager.m_panel_object->GetIsFocus()
-				&& !m_ui_manager.m_panel_selector_type_edit->GetIsFocus()) {
+				&& !m_ui_manager.m_panel_top->GetIsFocus()) {
 				m_is_mouse_left_pressed = true;
 			}
 
 			if (IsMousePressed(sf::Mouse::Right) 
 				&& !m_ui_manager.m_panel_object->GetIsFocus() 
-				&& !m_ui_manager.m_panel_selector_type_edit->GetIsFocus()) {
+				&& !m_ui_manager.m_panel_top->GetIsFocus()) {
 				m_is_mouse_right_pressed = true;
 			}
 			if (IsMouseReleased(sf::Mouse::Left))	m_is_mouse_left_pressed = false;
@@ -188,16 +188,16 @@ public:
 			break;
 		}
 
-		for (auto& edit : m_ui_manager.m_panel_selector_type_edit->GetButtonVector())
+		for (auto& edit : m_ui_manager.m_panel_top->GetButtonVector())
 		{
 			if (edit->Action()) {
 				if (edit->GetActionId() == "draw") {
 					m_type_mode = TypeMode::DRAW;
-					m_ui_manager.m_panel_selector_type_edit->m_type_mode = TypeMode::DRAW;
+					m_ui_manager.m_panel_top->m_type_mode = TypeMode::DRAW;
 				}
 				if (edit->GetActionId() == "edit") {
 					m_type_mode = TypeMode::EDIT;
-					m_ui_manager.m_panel_selector_type_edit->m_type_mode = TypeMode::EDIT;
+					m_ui_manager.m_panel_top->m_type_mode = TypeMode::EDIT;
 				}
 			}
 		}
@@ -207,7 +207,7 @@ public:
 
 	// Вставка и удаление объектов
 	void UpdPasteAndRemoveObject() {
-		if (m_ui_manager.m_panel_selector_type_edit->m_type_mode == TypeMode::DRAW) {
+		if (m_ui_manager.m_panel_top->m_type_mode == TypeMode::DRAW) {
 			for (auto& object : m_vec_object[m_layer.get]) {														// Проходимся по всем ячейкам текущего слоя
 				if (IsFocusObject(object)) {																		// Если курсор попадает в ячейку
 					if (object->GetLayer() == m_ui_manager.m_panel_object->GetSelectObjectLayerNum()) {				// Если номер слоя объекта в ячейке и выбранного объекта из панели одинаковые
