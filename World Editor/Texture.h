@@ -31,7 +31,7 @@ public:
 		for (int i = 0; i < 1; i++) Unit.push_back(Load("Map/unit/unit" + to_string(i) + ".png"));
 		for (int i = 0; i < 1; i++) Flying.push_back(Load("Map/flying/flying" + to_string(i) + ".png"));
 		for (int i = 0; i < 1; i++) Region.push_back(Load("Map/region/region" + to_string(i) + ".png"));
-		for (int i = 0; i < 2; i++) Edit.push_back(Load("UI/edit" + to_string(i) + ".png"));
+		for (int i = 0; i < 3; i++) Edit.push_back(Load("UI/edit" + to_string(i) + ".png"));
 	}
 
 	~Texture(void) {

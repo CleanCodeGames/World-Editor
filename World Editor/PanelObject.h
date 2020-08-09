@@ -21,7 +21,7 @@ public:
 	virtual void UpdateSelectedObject() = 0;
 	virtual void DrawSelectedObject() = 0;
 	virtual void ActionSelectedObject() = 0;
-
+	
 	virtual const v2f GetPosition() {
 		return m_shape.getPosition();
 	}

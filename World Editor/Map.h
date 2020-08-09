@@ -101,7 +101,7 @@ public:
 		if (IsKeyPressed(Key::T)) { 
 			m_ui_manager.m_is_transparent_empty_cell = !m_ui_manager.m_is_transparent_empty_cell;
 			if (m_ui_manager.m_is_transparent_empty_cell) m_color_empty_cell = Color::Transparent;
-			else m_color_empty_cell = Color(255, 80, 255, 100);
+			else m_color_empty_cell = Color(100, 100, 100, 100);
 
 			for (int i = 0; i < m_layer.ALL; i++) {
 				for (auto& object : m_vec_object[i]) {
@@ -151,38 +151,77 @@ public:
 		for (auto& cell : m_vec_cell[m_layer.get]) {
 			if (IsFocusCell(cell)) m_shape_pick_cell.setPosition(cell.GetPosition());
 		}
-		
+
 		switch (m_type_mode)
 		{
 		case TypeMode::DRAW:
-			if (IsMousePressed(sf::Mouse::Left) && !m_ui_manager.m_panel_object->GetIsFocus()) m_is_mouse_left_pressed = true;
-			if (IsMousePressed(sf::Mouse::Right) && !m_ui_manager.m_panel_object->GetIsFocus())	m_is_mouse_right_pressed = true;
+			if (IsMousePressed(sf::Mouse::Left)
+				&& !m_ui_manager.m_panel_object->GetIsFocus()
+				&& !m_ui_manager.m_panel_selector_type_edit->GetIsFocus()) {
+				m_is_mouse_left_pressed = true;
+			}
+
+			if (IsMousePressed(sf::Mouse::Right) 
+				&& !m_ui_manager.m_panel_object->GetIsFocus() 
+				&& !m_ui_manager.m_panel_selector_type_edit->GetIsFocus()) {
+				m_is_mouse_right_pressed = true;
+			}
 			if (IsMouseReleased(sf::Mouse::Left))	m_is_mouse_left_pressed = false;
 			if (IsMouseReleased(sf::Mouse::Right))	m_is_mouse_right_pressed = false;
+
 			break;
 		case TypeMode::EDIT:
+			m_is_mouse_left_pressed = false;
+			m_is_mouse_right_pressed = false;
+
+			if (IsMousePressed(sf::Mouse::Left)) {
+				for (auto& object: m_vec_object[m_layer.get]) {
+					if (cur_p == object->GetShape().getPosition()) {
+						cout << object->GetNameID() << endl;
+						cout << "Layer: " << object->GetLayer() << endl;
+					}
+				}
+			}
+
 			break;
 		default:
 			break;
 		}
+
+		for (auto& edit : m_ui_manager.m_panel_selector_type_edit->GetButtonVector())
+		{
+			if (edit->Action()) {
+				if (edit->GetActionId() == "draw") {
+					m_type_mode = TypeMode::DRAW;
+					m_ui_manager.m_panel_selector_type_edit->m_type_mode = TypeMode::DRAW;
+				}
+				if (edit->GetActionId() == "edit") {
+					m_type_mode = TypeMode::EDIT;
+					m_ui_manager.m_panel_selector_type_edit->m_type_mode = TypeMode::EDIT;
+				}
+			}
+		}
+
 		if (IsKeyPressed(Key::Q)) system("cls");
 	}
 
 	// Вставка и удаление объектов
 	void UpdPasteAndRemoveObject() {
-		for (auto& object : m_vec_object[m_layer.get]) {														// Проходимся по всем ячейкам текущего слоя
-			if (IsFocusObject(object)) {																		// Если курсор попадает в ячейку
-				if (object->GetLayer() == m_ui_manager.m_panel_object->GetSelectObjectLayerNum()) {				// Если номер слоя объекта в ячейке и выбранного объекта из панели одинаковые
-					if (m_is_mouse_left_pressed) {																// Если левый клик мышки зажат
-						if (object->GetNameID() != m_ui_manager.m_panel_object->GetSelectedObjectNameID()) {	// Если уникальный идентификатор не одинаковый
-							object = std::move(m_ui_manager.m_panel_object->GetSelectedObject());				// Меняем объект в ячейке на выбранный объект из панели
-							object->GetShape().setPosition(GetFocusCellPosition());								// Ставим объект ровно в позицию ячейки
+		if (m_ui_manager.m_panel_selector_type_edit->m_type_mode == TypeMode::DRAW) {
+			for (auto& object : m_vec_object[m_layer.get]) {														// Проходимся по всем ячейкам текущего слоя
+				if (IsFocusObject(object)) {																		// Если курсор попадает в ячейку
+					if (object->GetLayer() == m_ui_manager.m_panel_object->GetSelectObjectLayerNum()) {				// Если номер слоя объекта в ячейке и выбранного объекта из панели одинаковые
+						if (m_is_mouse_left_pressed) {																// Если левый клик мышки зажат
+							if (object->GetNameID() != m_ui_manager.m_panel_object->GetSelectedObjectNameID()) {	// Если уникальный идентификатор не одинаковый
+								object = std::move(m_ui_manager.m_panel_object->GetSelectedObject());				// Меняем объект в ячейке на выбранный объект из панели
+								object->GetShape().setPosition(GetFocusCellPosition());								// Ставим объект ровно в позицию ячейки
+							}
 						}
-					}
-					else if (m_is_mouse_right_pressed) {
-						if (object->GetNameID() != "Empty") {
-							object = std::move(make_unique<GameObject>(
-								CreateShape(GetFocusCellPosition(), v2f(CELL_SIZE, CELL_SIZE), -1, m_color_empty_cell, m_color_cell_out), m_layer.get, "Empty"));
+						else if (m_is_mouse_right_pressed) {
+							if (object->GetNameID() != "Empty") {
+								object = std::move(make_unique<GameObject>(
+									CreateShape(GetFocusCellPosition(), v2f(CELL_SIZE, CELL_SIZE), -1, m_color_empty_cell, m_color_cell_out), m_layer.get, "Empty"));
+							}
 						}
 					}
 				}
@@ -194,10 +233,8 @@ public:
 		m_ui_manager.Update();
 		switch (m_type_mode)
 		{
-		case TypeMode::DRAW:
-			UpdPasteAndRemoveObject();
-			break;
-		case TypeMode::EDIT: break;
+		case TypeMode::DRAW: UpdPasteAndRemoveObject(); break;
+		case TypeMode::EDIT:  break;
 		default: break;
 		}
 	}

@@ -22,7 +22,7 @@ private:
 			m_cam_zoom = 1.0;
 			cam.setSize(scr_W * m_cam_zoom, scr_H * m_cam_zoom);
 			// Текст зум камеры
-			m_text_cam_scale.setString("ZOOM CAMERA: " + to_string(m_cam_zoom));
+			m_text_cam_scale.setString("ZOOM CAMERA: " + to_string(round(m_cam_zoom * 10) / 10).substr(0, 3));
 		}
 		else if (is_ctrl_pressed && event.type == sf::Event::MouseWheelMoved) {
 			v2f raznica = v2f(cur_p.x - (scr_W / 2.f), cur_p.y - (scr_H / 2.f));
@@ -30,7 +30,7 @@ private:
 			else if (m_cam_zoom > 0.5) m_cam_zoom -= 0.1;
 			cam.setSize(scr_W * m_cam_zoom, scr_H * m_cam_zoom);
 			// Текст зум камеры
-			m_text_cam_scale.setString("ZOOM CAMERA: " + to_string(m_cam_zoom));
+			m_text_cam_scale.setString("ZOOM CAMERA: " + to_string(round(m_cam_zoom * 10) / 10).substr(0, 3));
 		}
 	}
 
@@ -56,7 +56,7 @@ public:
 		m_text_current_layer = CreateText(v2f(), TEXT_SIZE, "CURRENT LAYER: " + to_string(m_panel_object->GetSelectObjectLayerNum()) + " - " + m_panel_object->GetSelectedObjectNameID(), font.common, sf::Color::Yellow);
 		m_text_current_layer.setPosition(v2f(m_text_current_layer.getGlobalBounds().width/2, m_text_current_layer.getGlobalBounds().height/2 + 100));
 		// Текст зум камеры
-		m_text_cam_scale = CreateText(v2f(), TEXT_SIZE, "ZOOM CAMERA: " + to_string(round(m_cam_zoom * 10) / 10).substr(1,3), font.common, sf::Color::Yellow);
+		m_text_cam_scale = CreateText(v2f(), TEXT_SIZE, "ZOOM CAMERA: " + to_string(round(m_cam_zoom * 10) / 10).substr(0,3), font.common, sf::Color::Yellow);
 		m_text_cam_scale.setPosition(v2f(m_text_cam_scale.getGlobalBounds().width / 2, m_text_cam_scale.getGlobalBounds().height / 2 + 125));
 		// Текст "Отобразить все слои"
 		m_text_show_layer_all = CreateText(v2f(), TEXT_SIZE, "SHOW ALL LAYERS: " + str_off_or_on(is_show_layer_all), font.common, sf::Color::Yellow);
@@ -71,16 +71,28 @@ public:
 
 	virtual void Update() {
 		wnd.setView(wnd.getDefaultView());
-		m_panel_object->Update();
+		switch (m_panel_selector_type_edit->m_type_mode)
+		{
+		case TypeMode::DRAW: m_panel_object->Update(); break;
+		case TypeMode::EDIT: m_panel_selector_type_edit->Update(); break;
+		default: break;
+		}
+		// Экранная обработка
 		wnd.setView(cam);
 		m_panel_object->UpdateSelectedObject();
 	}
 
 	void Action() {
 		wnd.setView(wnd.getDefaultView());
+		m_panel_selector_type_edit->Action();
 
-		m_panel_object->Action();
-
+		switch (m_panel_selector_type_edit->m_type_mode)
+		{
+		case TypeMode::DRAW: m_panel_object->Action(); break;
+		case TypeMode::EDIT: break;
+		default: break;
+		}
+		
 		v2f panel_position = m_panel_object->GetPosition();
 
 		ZoomCamWheel();
@@ -111,9 +123,18 @@ public:
 	}
 
 	void Draw() {
-		m_panel_object->DrawSelectedObject();
+		switch (m_panel_selector_type_edit->m_type_mode)
+		{
+		case TypeMode::DRAW:  m_panel_object->DrawSelectedObject(); break;
+		case TypeMode::EDIT: m_panel_selector_type_edit->DrawSelectedObject(); break;
+		default: break;
+		}
+		// Отображение элементов интерфейса
+		
 		wnd.setView(wnd.getDefaultView());
-		m_panel_object->Draw();
+		if (m_panel_selector_type_edit->m_type_mode == TypeMode::DRAW) {
+			m_panel_object->Draw();
+		}
 		m_panel_selector_type_edit->Draw();
 		wnd.draw(m_text_current_layer);
 		wnd.draw(m_text_cam_scale);
