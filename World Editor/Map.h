@@ -22,7 +22,7 @@ private:
 	Color m_color_empty_cell = Color(100, 100, 100, 100);
 	Color m_color_cell_out = Color(45, 70, 45);
 
-	TypeMode m_type_mode = TypeMode::DRAW;
+	const TopPanelMode& m_top_panel_mode = m_ui_manager.m_panel_top->m_top_panel_mode;
 
 public:
 
@@ -152,9 +152,9 @@ public:
 			if (IsFocusCell(cell)) m_shape_pick_cell.setPosition(cell.GetPosition());
 		}
 
-		switch (m_type_mode)
+		switch (m_top_panel_mode)
 		{
-		case TypeMode::DRAW:
+		case TopPanelMode::DRAW:
 			if (IsMousePressed(sf::Mouse::Left)
 				&& !m_ui_manager.m_panel_object->GetIsFocus()
 				&& !m_ui_manager.m_panel_top->GetIsFocus()) {
@@ -170,36 +170,22 @@ public:
 			if (IsMouseReleased(sf::Mouse::Right))	m_is_mouse_right_pressed = false;
 
 			break;
-		case TypeMode::EDIT:
+
+		case TopPanelMode::EDIT:
 			m_is_mouse_left_pressed = false;
 			m_is_mouse_right_pressed = false;
-
 			if (IsMousePressed(sf::Mouse::Left)) {
+				cout << "I Work\n";
 				for (auto& object: m_vec_object[m_layer.get]) {
-					if (cur_p == object->GetShape().getPosition()) {
+					if (object->GetShape().getGlobalBounds().contains(cur_p)) {
 						cout << object->GetNameID() << endl;
 						cout << "Layer: " << object->GetLayer() << endl;
 					}
 				}
 			}
-
 			break;
 		default:
 			break;
-		}
-
-		for (auto& edit : m_ui_manager.m_panel_top->GetButtonVector())
-		{
-			if (edit->Action()) {
-				if (edit->GetActionId() == "draw") {
-					m_type_mode = TypeMode::DRAW;
-					m_ui_manager.m_panel_top->m_type_mode = TypeMode::DRAW;
-				}
-				if (edit->GetActionId() == "edit") {
-					m_type_mode = TypeMode::EDIT;
-					m_ui_manager.m_panel_top->m_type_mode = TypeMode::EDIT;
-				}
-			}
 		}
 
 		if (IsKeyPressed(Key::Q)) system("cls");
@@ -207,7 +193,7 @@ public:
 
 	// Вставка и удаление объектов
 	void UpdPasteAndRemoveObject() {
-		if (m_ui_manager.m_panel_top->m_type_mode == TypeMode::DRAW) {
+		if (m_top_panel_mode == TopPanelMode::DRAW) {
 			for (auto& object : m_vec_object[m_layer.get]) {														// Проходимся по всем ячейкам текущего слоя
 				if (IsFocusObject(object)) {																		// Если курсор попадает в ячейку
 					if (object->GetLayer() == m_ui_manager.m_panel_object->GetSelectObjectLayerNum()) {				// Если номер слоя объекта в ячейке и выбранного объекта из панели одинаковые
@@ -231,10 +217,10 @@ public:
 
 	void Update() {
 		m_ui_manager.Update();
-		switch (m_type_mode)
+		switch (m_top_panel_mode)
 		{
-		case TypeMode::DRAW: UpdPasteAndRemoveObject(); break;
-		case TypeMode::EDIT:  break;
+		case TopPanelMode::DRAW: UpdPasteAndRemoveObject(); break;
+		case TopPanelMode::EDIT:  break;
 		default: break;
 		}
 	}
@@ -243,19 +229,23 @@ public:
 		if (m_ui_manager.is_show_layer_all == true) { // Если отобразить все слои
 			for (int i = 0; i < m_layer.ALL; i++) {
 				for (auto& object : m_vec_object[i]) {
-					if (i == 0 && object->GetNameID() == "Empty") {
-						object->Draw();
-					}
-					else if (object->GetNameID() != "Empty")
-					{
-						object->Draw();
+					if (GetVisible().intersects(object->GetShape().getGlobalBounds())) {
+						if (i == 0 && object->GetNameID() == "Empty") {
+							object->Draw();
+						}
+						else if (object->GetNameID() != "Empty")
+						{
+							object->Draw();
+						}
 					}
 				}
 			}
 		}
 		else {
 			for (auto& object : m_vec_object[m_layer.get])
-				object->Draw();
+				if (GetVisible().intersects(object->GetShape().getGlobalBounds())) {
+					object->Draw();
+				}
 		}
 		wnd.draw(m_shape_pick_cell);
 		m_ui_manager.Draw();

@@ -1,6 +1,6 @@
 #pragma once
 #include "PanelObject.h"
-#include "SelectorTypeEdit.h"
+#include "TopPanel.h"
 
 class UI_Manager : public B
 {
@@ -12,6 +12,7 @@ private:
 	sf::Text m_text_show_greed;
 	sf::Text m_text_empty_cell;
 	sf::Text m_text_fps_counter;
+
 	float m_sec_timer = 0;
 	int m_fps_counter = 0;
 	bool is_ctrl_pressed = false;
@@ -86,10 +87,10 @@ public:
 		}
 
 		wnd.setView(wnd.getDefaultView());
-		switch (m_panel_top->m_type_mode)
+		switch (m_panel_top->m_top_panel_mode)
 		{
-		case TypeMode::DRAW: m_panel_object->Update(); break;
-		case TypeMode::EDIT: m_panel_top->Update(); break;
+		case TopPanelMode::DRAW: m_panel_object->Update(); break;
+		case TopPanelMode::EDIT: m_panel_top->Update(); break;
 		default: break;
 		}
 		// Экранная обработка
@@ -101,10 +102,10 @@ public:
 		wnd.setView(wnd.getDefaultView());
 		m_panel_top->Action();
 
-		switch (m_panel_top->m_type_mode)
+		switch (m_panel_top->m_top_panel_mode)
 		{
-		case TypeMode::DRAW: m_panel_object->Action(); break;
-		case TypeMode::EDIT: break;
+		case TopPanelMode::DRAW: m_panel_object->Action(); break;
+		case TopPanelMode::EDIT: break;
 		default: break;
 		}
 		
@@ -138,16 +139,16 @@ public:
 	}
 
 	void Draw() {
-		switch (m_panel_top->m_type_mode)
+		switch (m_panel_top->m_top_panel_mode)
 		{
-		case TypeMode::DRAW:  m_panel_object->DrawSelectedObject(); break;
-		case TypeMode::EDIT: m_panel_top->DrawSelectedObject(); break;
+		case TopPanelMode::DRAW:  m_panel_object->DrawSelectedObject(); break;
+		case TopPanelMode::EDIT: m_panel_top->DrawSelectedObject(); break;
 		default: break;
 		}
 		// Отображение элементов интерфейса
 		
 		wnd.setView(wnd.getDefaultView());
-		if (m_panel_top->m_type_mode == TypeMode::DRAW) {
+		if (m_panel_top->m_top_panel_mode == TopPanelMode::DRAW) {
 			m_panel_object->Draw();
 		}
 		m_panel_top->Draw();

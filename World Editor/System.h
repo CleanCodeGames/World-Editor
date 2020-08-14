@@ -5,9 +5,9 @@
 class System
 {
 public:
-	//static const sf::FloatRect GetVisible() {
-	//	return sf::FloatRect(cam.getCenter().x - (scr_W / 2), cam.getCenter().y - (scr_H / 2), scr_W, scr_H);
-	//}
+	static const sf::FloatRect GetVisible() {
+		return sf::FloatRect(cam.getCenter().x - (cam.getSize().x / 2), cam.getCenter().y - (cam.getSize().y / 2), cam.getSize().x, cam.getSize().y);
+	}
 	static void SystemUpdate() {
 		time = float(clock.getElapsedTime().asMicroseconds()) / 1000.f;
 		clock.restart();
@@ -154,7 +154,7 @@ public:
 			scr_H = sf::VideoMode::getDesktopMode().height;
 			font = Font();
 			texture = Texture();
-			wnd.create(sf::VideoMode(scr_W, scr_H), "World Editor", sf::Style::Close, sf::ContextSettings(0, 0, 8));
+			wnd.create(sf::VideoMode(scr_W, scr_H), "World Editor", sf::Style::None, sf::ContextSettings(0, 0, 8));
 			cam.reset(sf::FloatRect(0, 0, scr_W, scr_H));
 			cam.setCenter(0, 0);
 			cam_p = cam.getCenter();
@@ -162,7 +162,7 @@ public:
 			cur_p_wnd = v2f(0, 0);
 			wnd.setView(cam);
 			wnd.setMouseCursorVisible(true);
-			//wnd.setFramerateLimit(30);
+			wnd.setFramerateLimit(30);
 			srand(::time(0));
 		}
 	}

@@ -1,19 +1,13 @@
 #pragma once
 #include "PanelObject.h"
 // Тип режима редактирования карты
-enum class TypeMode {
+enum class TopPanelMode {
 	DRAW = 0u,
 	EDIT = 1u,
 	SAVE = 2u,
-	HELP = 3u
-};
-
-// Тип всплывающих настроек для панели редактирования объекта
-enum class TypeEditPickedObject {
-	FLYING, // 
-	UNIT,
-	DECOR,
-	WATER
+	HELP = 3u,
+	LOAD = 4u,
+	EXIT = 5u
 };
 
 class BaseTopPanel : public B
@@ -31,8 +25,8 @@ protected:
 
 public:
 
-	using TM = TypeMode;
-	TM m_type_mode = TM::DRAW;
+	using TPM = TopPanelMode;
+	TPM m_top_panel_mode = TPM::DRAW;
 
 	BaseTopPanel() {
 	}
@@ -81,6 +75,7 @@ public:
 			vec_button.push_back(make_unique<ButtonClickActive>(CreateShape(v2f(2 + half_size.x + button_size.x + 2, half_size.y), button_size, texture.Edit[3]), "save"));
 			vec_button.push_back(make_unique<ButtonClickActive>(CreateShape(v2f(2 + half_size.x + button_size.x + 2, half_size.y + button_size.y + 2), button_size, texture.Edit[4]), "help"));
 			vec_button.push_back(make_unique<ButtonClickActive>(CreateShape(v2f(scr_W - half_size.x - 2, half_size.y + 2), button_size, texture.Edit[5]), "exit"));
+			vec_button.push_back(make_unique<ButtonClickActive>(CreateShape(v2f(2 + half_size.x + (button_size.x * 2) + 2, half_size.y), button_size, texture.Edit[6]), "load"));
 		}
 		m_shape_secelted_mode_ico_on_panel = CreateShape(vec_button[0]->GetShape().getPosition(), vec_button[0]->GetShape().getSize(), -2, Color::Transparent, Color::Yellow);
 		m_shape_selected_mode_ico_on_cursor = CreateShape(cur_p, v2f(vec_button[0]->GetShape().getSize()), texture.Edit[2]);
@@ -88,34 +83,38 @@ public:
 	virtual void Update() override {
 		BaseTopPanel::Update();
 		static float alpha_rotation = 0;
-		alpha_rotation += 0.1f;
-		m_shape_selected_mode_ico_on_cursor.setRotation(cos(alpha_rotation) * 46);
+		alpha_rotation += 0.015f * time;
+		m_shape_selected_mode_ico_on_cursor.setRotation(cos(alpha_rotation) * 10);
 	}
 
 	virtual void Action() override {
 		for (auto& button : vec_button) {
 			if (button->Action()) {
 				m_shape_secelted_mode_ico_on_panel.setPosition(button->GetShape().getPosition());
-
 				if (button->GetActionId() == "draw") {
-					m_shape_secelted_mode_ico_on_panel = CreateShape(vec_button[0]->GetShape().getPosition(), vec_button[0]->GetShape().getSize(), -2, Color::Transparent, Color::Yellow);
-					m_type_mode = TM::DRAW;
+					m_shape_selected_mode_ico_on_cursor = Shape();
+					m_top_panel_mode = TPM::DRAW;
 				}
 				else if (button->GetActionId() == "edit") {
 					m_shape_selected_mode_ico_on_cursor = CreateShape(cur_p, v2f(button->GetShape().getSize()), texture.Edit[2]);
-					m_type_mode = TM::EDIT;
+					m_top_panel_mode = TPM::EDIT;
 				}
 				else if (button->GetActionId() == "save") {
-					m_type_mode = TM::SAVE;
-					cout << "Save\n";
+					m_shape_selected_mode_ico_on_cursor = Shape();
+					m_top_panel_mode = TPM::SAVE;
 				}
 				else if (button->GetActionId() == "help") {
-					m_type_mode = TM::HELP;
-					cout << "Help\n";
+					m_shape_selected_mode_ico_on_cursor = Shape();
+					m_top_panel_mode = TPM::HELP;
 				}
 				else if (button->GetActionId() == "exit") {
+					m_shape_selected_mode_ico_on_cursor = Shape();
+					m_top_panel_mode = TPM::EXIT;
 					wnd.close();
-					cout << "Exit\n";
+				}
+				else if (button->GetActionId() == "load") {
+					m_shape_selected_mode_ico_on_cursor = Shape();
+					m_top_panel_mode = TPM::LOAD;
 				}
 			}
 		}
