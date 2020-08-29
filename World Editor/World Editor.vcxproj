@@ -151,6 +151,7 @@
   <ItemGroup>
     <ClInclude Include="Button.h" />
     <ClInclude Include="Cell.h" />
+    <ClInclude Include="CustomObjectPanel.h" />
     <ClInclude Include="Define.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="Launcher.h" />
@@ -162,6 +163,7 @@
     <ClInclude Include="Texture.h" />
     <ClInclude Include="UI_Manager.h" />
     <ClInclude Include="WorldEditor.h" />
+    <ClInclude Include="WorldSetting.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

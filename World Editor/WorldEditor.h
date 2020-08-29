@@ -9,6 +9,7 @@ private:
 	enum class STATE { LAUNCHER, EDITOR, SAVING } state;
 	Launcher launcher;
 	Map map;
+	WorldSetting m_world_sttings;
 	
 public:
 
@@ -29,9 +30,15 @@ public:
 						if (act == "Quit") {
 							wnd.close();
 						}
-						else if (act == "Start") {
+						else if (act == "New") {
+							// Открыть меню настроек создания новой карты
 							state = WorldEditor::STATE::EDITOR;
-							map.Create(v2i(64, 32), "test");
+							m_world_sttings.SetTypeController(TypeController::RTC);
+							wnd.setSize(sf::Vector2u(scr_W, scr_H));
+							map.Create(v2i(64, 32), "MapName[x,y] : Genre RTC");
+						}
+						else if (act == "Load") {
+							cout << "Load!\n";
 						}
 						wnd.setView(cam);
 					}

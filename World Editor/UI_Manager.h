@@ -1,5 +1,5 @@
 #pragma once
-#include "PanelObject.h"
+#include "CustomObjectPanel.h"
 #include "TopPanel.h"
 
 class UI_Manager : public B
@@ -28,7 +28,6 @@ private:
 			m_text_cam_scale.setString("ZOOM CAMERA: " + to_string(round(m_cam_zoom * 10) / 10).substr(0, 3));
 		}
 		else if (is_ctrl_pressed && event.type == sf::Event::MouseWheelMoved) {
-			v2f raznica = v2f(cur_p.x - (scr_W / 2.f), cur_p.y - (scr_H / 2.f));
 			if (event.mouseWheel.delta == -1 && m_cam_zoom < 3.0) m_cam_zoom += 0.1;
 			else if (m_cam_zoom > 0.5) m_cam_zoom -= 0.1;
 			cam.setSize(scr_W * m_cam_zoom, scr_H * m_cam_zoom);
@@ -47,6 +46,7 @@ public:
 
 	unique_ptr<BaseTopPanel> m_panel_top;
 	unique_ptr<BasePanelObject> m_panel_object;
+	unique_ptr<BasePanelObjectCustom> m_panel_custom;
 	bool is_show_layer_all = false;
 	bool m_is_transparent_empty_cell = false;
 	bool m_is_show_greed_cell = true;
@@ -54,6 +54,7 @@ public:
 	UI_Manager() {
 		m_panel_object = std::move(make_unique<PanelObjectTerrain>());
 		m_panel_top = std::move(make_unique<TopPanel>());
+		m_panel_custom = std::move(make_unique<BasePanelObjectCustom>());
 		// Текст Текущий слой и ID-name выбранного объект
 		
 		m_text_current_layer = CreateText(v2f(), TEXT_SIZE, "CURRENT LAYER: " + to_string(m_panel_object->GetSelectObjectLayerNum()) + " - " + m_panel_object->GetSelectedObjectNameID(), font.common, sf::Color::Yellow);
@@ -89,13 +90,17 @@ public:
 		wnd.setView(wnd.getDefaultView());
 		switch (m_panel_top->m_top_panel_mode)
 		{
-		case TopPanelMode::DRAW: m_panel_object->Update(); break;
+		case TopPanelMode::DRAW:
+			m_panel_object->Update(); 
+			m_panel_custom->Update();
+			break;
 		case TopPanelMode::EDIT: m_panel_top->Update(); break;
 		default: break;
 		}
 		// Экранная обработка
 		wnd.setView(cam);
 		m_panel_object->UpdateSelectedObject();
+		m_panel_custom->UpdateSelectedObject();
 	}
 
 	void Action() {
@@ -104,7 +109,10 @@ public:
 
 		switch (m_panel_top->m_top_panel_mode)
 		{
-		case TopPanelMode::DRAW: m_panel_object->Action(); break;
+		case TopPanelMode::DRAW:
+			m_panel_custom->Action();
+			m_panel_object->Action(); 
+			break;
 		case TopPanelMode::EDIT: break;
 		default: break;
 		}
@@ -150,6 +158,7 @@ public:
 		wnd.setView(wnd.getDefaultView());
 		if (m_panel_top->m_top_panel_mode == TopPanelMode::DRAW) {
 			m_panel_object->Draw();
+			m_panel_custom->Draw();
 		}
 		m_panel_top->Draw();
 		wnd.draw(m_text_current_layer);

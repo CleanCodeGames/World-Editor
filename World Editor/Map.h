@@ -1,27 +1,32 @@
 #pragma once
 #include "Cell.h"
 #include "UI_Manager.h"
+#include "WorldSetting.h"
 
 class Map : public B
 {
 private:
 	
-	Layer m_layer;
-	string m_name;
-	v2i m_size;
-	v2f m_center_map;
-	v2f m_click_position;
-	vector<Cell> m_vec_cell[Layer::ALL];
-	vector<unique_ptr<AbstractGameObject>> m_vec_object[Layer::ALL];
-	bool m_is_created = false;
-	bool m_is_mouse_left_pressed = false;
-	bool m_is_mouse_right_pressed = false;
+	Layer m_layer;			// Номер слоя
+	string m_name;			// Название карты
+	v2i m_size;				// Размер карты
+	v2f m_center_map;		// Центр карты
+	v2f m_click_position;	// Позиция клика мышки
+
+	vector<Cell> m_vec_cell[Layer::ALL];								// Позиции ячеек карты
+	vector<unique_ptr<AbstractGameObject>> m_vec_object[Layer::ALL];	// Объекты на карте
+
+	bool m_is_created = false;				// Была ли карта создана
+	bool m_is_mouse_left_pressed = false;	// Если ЛКМ зажата
+	bool m_is_mouse_right_pressed = false;	// Если ПКМ зажата
 	
-	UI_Manager m_ui_manager;
+	
 	sf::ConvexShape convex = sf::ConvexShape(size_t(4));
 	Color m_color_empty_cell = Color(100, 100, 100, 100);
 	Color m_color_cell_out = Color(45, 70, 45);
 
+	UI_Manager m_ui_manager;	// Менеджер интерфейса
+	// Ссылка на переключающийся режим верхней панели редактора
 	const TopPanelMode& m_top_panel_mode = m_ui_manager.m_panel_top->m_top_panel_mode;
 
 public:
@@ -112,6 +117,7 @@ public:
 			}
 		}
 	}
+
 	// Прозрачность сетки
 	void ActTransparentGreedCell() {
 		if (IsKeyPressed(Key::G)) { 
@@ -125,6 +131,7 @@ public:
 			}
 		}
 	}
+
 	// Выбор слоя редактирования
 	void  ActSelectionLayer() {
 		if (IsKeyPressed(Key::Num1)) m_layer.set(Layer::terrain);
@@ -168,24 +175,26 @@ public:
 			}
 			if (IsMouseReleased(sf::Mouse::Left))	m_is_mouse_left_pressed = false;
 			if (IsMouseReleased(sf::Mouse::Right))	m_is_mouse_right_pressed = false;
-
 			break;
 
 		case TopPanelMode::EDIT:
 			m_is_mouse_left_pressed = false;
 			m_is_mouse_right_pressed = false;
 			if (IsMousePressed(sf::Mouse::Left)) {
-				cout << "I Work\n";
 				for (auto& object: m_vec_object[m_layer.get]) {
 					if (object->GetShape().getGlobalBounds().contains(cur_p)) {
 						cout << object->GetNameID() << endl;
 						cout << "Layer: " << object->GetLayer() << endl;
+						break;
 					}
 				}
 			}
 			break;
-		default:
-			break;
+		case TopPanelMode::HELP: break;
+		case TopPanelMode::SAVE: break;
+		case TopPanelMode::LOAD: break;
+		case TopPanelMode::EXIT: break;
+		default: break;
 		}
 
 		if (IsKeyPressed(Key::Q)) system("cls");
@@ -220,7 +229,11 @@ public:
 		switch (m_top_panel_mode)
 		{
 		case TopPanelMode::DRAW: UpdPasteAndRemoveObject(); break;
-		case TopPanelMode::EDIT:  break;
+		case TopPanelMode::EDIT: break;
+		case TopPanelMode::HELP: break;
+		case TopPanelMode::SAVE: break;
+		case TopPanelMode::LOAD: break;
+		case TopPanelMode::EXIT: break;
 		default: break;
 		}
 	}
@@ -233,8 +246,7 @@ public:
 						if (i == 0 && object->GetNameID() == "Empty") {
 							object->Draw();
 						}
-						else if (object->GetNameID() != "Empty")
-						{
+						else if (object->GetNameID() != "Empty") {
 							object->Draw();
 						}
 					}

@@ -64,5 +64,11 @@
     <ClInclude Include="TopPanel.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="WorldSetting.h">
+      <Filter>Файлы заголовков\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomObjectPanel.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
