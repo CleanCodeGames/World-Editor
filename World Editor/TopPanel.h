@@ -2,7 +2,7 @@
 #include "PanelObject.h"
 // Тип режима редактирования карты
 enum class TopPanelMode {
-	DRAW = 0u,
+	PASTE = 0u,
 	EDIT = 1u,
 	SAVE = 2u,
 	HELP = 3u,
@@ -26,9 +26,13 @@ protected:
 public:
 
 	using TPM = TopPanelMode;
-	TPM m_top_panel_mode = TPM::DRAW;
+	TPM m_top_panel_mode = TPM::PASTE;
 
 	BaseTopPanel() {
+	}
+
+	virtual bool GetIsFocus() const {
+		return m_is_focus_panel;
 	}
 	virtual vector<unique_ptr<AbstractButton>>& GetButtonVector() {
 		return vec_button;
@@ -93,7 +97,7 @@ public:
 				m_shape_secelted_mode_ico_on_panel.setPosition(button->GetShape().getPosition());
 				if (button->GetActionId() == "draw") {
 					m_shape_selected_mode_ico_on_cursor = Shape();
-					m_top_panel_mode = TPM::DRAW;
+					m_top_panel_mode = TPM::PASTE;
 				}
 				else if (button->GetActionId() == "edit") {
 					m_shape_selected_mode_ico_on_cursor = CreateShape(cur_p, v2f(button->GetShape().getSize()), texture.Edit[2]);

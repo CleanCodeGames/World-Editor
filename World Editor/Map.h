@@ -20,8 +20,6 @@ private:
 	bool m_is_mouse_left_pressed = false;	// Если ЛКМ зажата
 	bool m_is_mouse_right_pressed = false;	// Если ПКМ зажата
 	
-	
-	sf::ConvexShape convex = sf::ConvexShape(size_t(4));
 	Color m_color_empty_cell = Color(100, 100, 100, 100);
 	Color m_color_cell_out = Color(45, 70, 45);
 
@@ -44,13 +42,6 @@ public:
 	{
 		m_size = size;
 		m_name = name;
-
-		convex.setPoint(0, v2f(-4 , -24));
-		convex.setPoint(1, v2f(4, -24));
-		convex.setPoint(2, v2f(24, 24));
-		convex.setPoint(3, v2f(-24, 24));
-		convex.setTexture(&texture.Terrain[0]);
-		convex.setFillColor(sf::Color(200,255,0,100));
 
 		m_shape_pick_cell = CreateShape(v2f(0, 0), v2f(CELL_SIZE, CELL_SIZE), -1, Color::Transparent, Color::Green);
 
@@ -161,10 +152,9 @@ public:
 
 		switch (m_top_panel_mode)
 		{
-		case TopPanelMode::DRAW:
-			if (IsMousePressed(sf::Mouse::Left)
-				&& !m_ui_manager.m_panel_object->GetIsFocus()
-				&& !m_ui_manager.m_panel_top->GetIsFocus()) {
+		case TopPanelMode::PASTE:
+
+			if (IsMousePressed(sf::Mouse::Left) && !m_ui_manager.GetIsPanelFocus()) {
 				m_is_mouse_left_pressed = true;
 			}
 
@@ -173,13 +163,16 @@ public:
 				&& !m_ui_manager.m_panel_top->GetIsFocus()) {
 				m_is_mouse_right_pressed = true;
 			}
+
 			if (IsMouseReleased(sf::Mouse::Left))	m_is_mouse_left_pressed = false;
 			if (IsMouseReleased(sf::Mouse::Right))	m_is_mouse_right_pressed = false;
 			break;
 
 		case TopPanelMode::EDIT:
+
 			m_is_mouse_left_pressed = false;
 			m_is_mouse_right_pressed = false;
+
 			if (IsMousePressed(sf::Mouse::Left)) {
 				for (auto& object: m_vec_object[m_layer.get]) {
 					if (object->GetShape().getGlobalBounds().contains(cur_p)) {
@@ -202,7 +195,7 @@ public:
 
 	// Вставка и удаление объектов
 	void UpdPasteAndRemoveObject() {
-		if (m_top_panel_mode == TopPanelMode::DRAW) {
+		if (m_top_panel_mode == TopPanelMode::PASTE) {
 			for (auto& object : m_vec_object[m_layer.get]) {														// Проходимся по всем ячейкам текущего слоя
 				if (IsFocusObject(object)) {																		// Если курсор попадает в ячейку
 					if (object->GetLayer() == m_ui_manager.m_panel_object->GetSelectObjectLayerNum()) {				// Если номер слоя объекта в ячейке и выбранного объекта из панели одинаковые
@@ -228,7 +221,7 @@ public:
 		m_ui_manager.Update();
 		switch (m_top_panel_mode)
 		{
-		case TopPanelMode::DRAW: UpdPasteAndRemoveObject(); break;
+		case TopPanelMode::PASTE: UpdPasteAndRemoveObject(); break;
 		case TopPanelMode::EDIT: break;
 		case TopPanelMode::HELP: break;
 		case TopPanelMode::SAVE: break;
@@ -261,7 +254,6 @@ public:
 		}
 		wnd.draw(m_shape_pick_cell);
 		m_ui_manager.Draw();
-		wnd.draw(convex);
 	}
 
 	~Map() {

@@ -52,23 +52,23 @@
     <ClInclude Include="PanelObject.h">
       <Filter>Файлы заголовков\UI</Filter>
     </ClInclude>
-    <ClInclude Include="Launcher.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="WorldEditor.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="UI_Manager.h">
       <Filter>Файлы заголовков\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="TopPanel.h">
-      <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="WorldSetting.h">
       <Filter>Файлы заголовков\Map</Filter>
     </ClInclude>
-    <ClInclude Include="CustomObjectPanel.h">
-      <Filter>Файлы заголовков</Filter>
+    <ClInclude Include="PanelObjectConctructor.h">
+      <Filter>Файлы заголовков\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="TopPanel.h">
+      <Filter>Файлы заголовков\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Launcher.h">
+      <Filter>Файлы заголовков\System</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldEditor.h">
+      <Filter>Файлы заголовков\System</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

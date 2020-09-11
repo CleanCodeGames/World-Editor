@@ -102,6 +102,7 @@ private:
 		}
 	}
 protected:
+
 	v2f head_position;
 	v2f panel_position;
 	const v2f head_size;

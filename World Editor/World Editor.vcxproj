@@ -151,13 +151,13 @@
   <ItemGroup>
     <ClInclude Include="Button.h" />
     <ClInclude Include="Cell.h" />
-    <ClInclude Include="CustomObjectPanel.h" />
     <ClInclude Include="Define.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="Launcher.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="PanelObject.h" />
+    <ClInclude Include="PanelObjectConctructor.h" />
     <ClInclude Include="TopPanel.h" />
     <ClInclude Include="System.h" />
     <ClInclude Include="Texture.h" />
