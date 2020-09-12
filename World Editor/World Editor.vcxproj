@@ -158,6 +158,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="PanelObject.h" />
     <ClInclude Include="PanelObjectConctructor.h" />
+    <ClInclude Include="TextBox.h" />
     <ClInclude Include="TopPanel.h" />
     <ClInclude Include="System.h" />
     <ClInclude Include="Texture.h" />

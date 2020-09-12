@@ -70,5 +70,8 @@
     <ClInclude Include="WorldEditor.h">
       <Filter>Файлы заголовков\System</Filter>
     </ClInclude>
+    <ClInclude Include="TextBox.h">
+      <Filter>Файлы заголовков\UI</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
