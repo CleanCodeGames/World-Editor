@@ -99,11 +99,14 @@ public:
 		wnd.setView(wnd.getDefaultView());
 		switch (m_panel_top->m_top_panel_mode)
 		{
-		case TopPanelMode::PASTE:
-			m_panel_object->Update(); 
-			break;
-		case TopPanelMode::EDIT: m_panel_top->Update(); break;
-		default: break;
+			case TopPanelMode::PASTE:
+				m_panel_object->Update(); 
+				break;
+			case TopPanelMode::EDIT: 
+				m_panel_top->Update();
+				m_panel_object_creator->Update();
+				break;
+			default: break;
 		}
 		// Экранная обработка
 		wnd.setView(cam);
@@ -171,18 +174,18 @@ public:
 
 		switch (m_panel_top->m_top_panel_mode)
 		{
-		case TopPanelMode::PASTE:
+			case TopPanelMode::PASTE:
 
-			// Отображение выбранного элемента 
-			// с панели объектов под курсором
-			m_panel_object->DrawSelectedObject(); 
+				// Отображение выбранного элемента 
+				// с панели объектов под курсором
+				m_panel_object->DrawSelectedObject(); 
 
-			break;
-		case TopPanelMode::EDIT: break;
-		case TopPanelMode::SAVE: break;
-		case TopPanelMode::LOAD: break;
-		case TopPanelMode::HELP: break;
-		default: break;
+				break;
+			case TopPanelMode::EDIT: break;
+			case TopPanelMode::SAVE: break;
+			case TopPanelMode::LOAD: break;
+			case TopPanelMode::HELP: break;
+			default: break;
 		}
 
 		// =================================#

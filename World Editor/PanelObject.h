@@ -6,7 +6,7 @@ class AbstractPanel : public B
 {
 protected:
 
-	Shape m_shape;
+	Shape m_shape_panel;
 	vector<unique_ptr<AbstractButton>> vec_button;
 	vector<v2f> vec_button_pos;
 	bool m_is_focus_panel = false;
@@ -23,7 +23,7 @@ public:
 	virtual void ActionSelectedObject() = 0;
 	
 	virtual const v2f GetPosition() {
-		return m_shape.getPosition();
+		return m_shape_panel.getPosition();
 	}
 	virtual const bool GetIsFocus() {
 		return m_is_focus_panel;
@@ -92,55 +92,59 @@ unique_ptr<AbstractGameObject> BasePanelObject::m_selected_object;
 class PanelObject : public BasePanelObject
 {
 private:
+
 	void ButtonPositionUpdate() {
 		int count_b = 0;
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 5; j++) {
-				if (count_b < m_but_nums) m_vec_button_pos[count_b] = v2f(head_position.x - (head_size.x / 2) + (50 * j) + 26, (head_position.y + 75) + (50 * i) - 36);
+				if (count_b < m_but_nums) m_vec_button_pos[count_b] = v2f(m_head_position.x - (m_head_size.x / 2) + (50 * j) + 26, (m_head_position.y + 75) + (50 * i) - 36);
 				count_b++;
 			}
 		}
 	}
+
 protected:
 
-	v2f head_position;
-	v2f panel_position;
-	const v2f head_size;
-	const v2f panel_size;
-	Shape shape_picked_border;
+	v2f m_head_position;
+	v2f m_panel_position;
+	const v2f m_head_size = v2f(252, 24);
+	const v2f m_panel_size = v2f(252, 504);
+	Shape m_shape_picked_border;
 	int m_picked_button_num;
 
 public:
-	PanelObject(v2f pos = v2f()) : head_size(252, 24), panel_size(252, 504) {
+	PanelObject(v2f pos = v2f()) {
 		m_type = TypeGameObject::Abstract;
 		m_picked_button_num = 0;
-		if (pos == v2f()) head_position = v2f(scr_W - head_size.x / 2, head_size.y / 2 + 98);
-		else head_position = pos;
-		panel_position = v2f(head_position.x, head_position.y + (head_size.y / 2) + (panel_size.y / 2) - 2);
-		m_shape_head = CreateShape(head_position, head_size, size_panel_out, color_panel_in, color_panel_out);
-		m_shape = CreateShape(panel_position, panel_size, size_panel_out, color_panel_in, color_panel_out);
+		if (pos == v2f()) m_head_position = v2f(scr_W - m_head_size.x / 2, m_head_size.y / 2 + 98);
+		else m_head_position = pos;
+		m_panel_position = v2f(m_head_position.x, m_head_position.y + (m_head_size.y / 2) + (m_panel_size.y / 2) - 2);
+		m_shape_head = CreateShape(m_head_position, m_head_size, size_panel_out, color_panel_in, color_panel_out);
+		m_shape_panel = CreateShape(m_panel_position, m_panel_size, size_panel_out, color_panel_in, color_panel_out);
 		m_is_object_picked = true;
 		m_selected_object = std::move(make_unique<GameObjectTerrain>(CreateShape(cur_p, v2f(CELL_SIZE, CELL_SIZE), size_cell_out, color_cell_in, color_cell_out), Layer::terrain, btncmd_Terrain + to_string(0)));
 		m_selected_object->GetShape().setScale(0.75, 0.75);
 		for (int i = 0; i < 10; i++)
 			for (int j = 0; j < 5; j++)
-				m_vec_button_pos.push_back(v2f(head_position.x - (head_size.x / 2) + (50 * j) + 26, (head_position.y + 75) + (50 * i) - 36));
+				m_vec_button_pos.push_back(v2f(m_head_position.x - (m_head_size.x / 2) + (50 * j) + 26, (m_head_position.y + 75) + (50 * i) - 36));
 		ButtonPositionUpdate();
-		shape_picked_border = CreateShape(m_vec_button_pos[0], v2f(48, 48), size_panel_out, Color::Transparent, Color::Yellow);
+		m_shape_picked_border = CreateShape(m_vec_button_pos[0], v2f(48, 48), size_panel_out, Color::Transparent, Color::Yellow);
 	}
 
 	virtual void Update() override {
+
 		m_is_focus_head = IsContains(m_shape_head, B::cur_p_wnd);
-		m_is_focus_panel = (IsContains(m_shape, B::cur_p_wnd) || m_is_focus_head);
+		m_is_focus_panel = (IsContains(m_shape_panel, B::cur_p_wnd) || m_is_focus_head);
+
 		if (m_is_panel_move) {
-			head_position = cur_p_wnd;
-			if (head_position.x > (B::scr_W - head_size.x / 2)) head_position.x = (B::scr_W - head_size.x / 2);
-			else if (head_position.x < head_size.x / 2) head_position.x = head_size.x / 2;
-			if (head_position.y < head_size.y / 2 + 98) head_position.y = head_size.y / 2 + 98;
-			else if (head_position.y > B::scr_H * 0.9) head_position.y = B::scr_H * 0.9;
-			panel_position = v2f(head_position.x, head_position.y + (head_size.y / 2) + (panel_size.y / 2) - 2);
-			m_shape_head.setPosition(head_position);
-			m_shape.setPosition(panel_position);
+			m_head_position = cur_p_wnd;
+			if (m_head_position.x > (B::scr_W - m_head_size.x / 2)) m_head_position.x = (B::scr_W - m_head_size.x / 2);
+			else if (m_head_position.x < m_head_size.x / 2) m_head_position.x = m_head_size.x / 2;
+			if (m_head_position.y < m_head_size.y / 2 + 98) m_head_position.y = m_head_size.y / 2 + 98;
+			else if (m_head_position.y > B::scr_H * 0.9) m_head_position.y = B::scr_H * 0.9;
+			m_panel_position = v2f(m_head_position.x, m_head_position.y + (m_head_size.y / 2) + (m_panel_size.y / 2) - 2);
+			m_shape_head.setPosition(m_head_position);
+			m_shape_panel.setPosition(m_panel_position);
 			ButtonPositionUpdate();
 		}
 		if (!m_vec_button.empty()) {
@@ -149,7 +153,7 @@ public:
 				m_vec_button[i]->GetShape().setPosition(m_vec_button_pos[i]);
 			}
 		}
-		shape_picked_border.setPosition(m_vec_button[m_picked_button_num]->GetShape().getPosition());
+		m_shape_picked_border.setPosition(m_vec_button[m_picked_button_num]->GetShape().getPosition());
 	}
 	virtual void UpdateSelectedObject() override {
 		if (m_is_object_picked) {
@@ -168,10 +172,10 @@ public:
 	}
 	virtual void Draw() override {
 		wnd.draw(m_shape_head);
-		wnd.draw(m_shape);
+		wnd.draw(m_shape_panel);
 		for (auto& b : m_vec_button) {
 			b->Draw();
-			wnd.draw(shape_picked_border);
+			wnd.draw(m_shape_picked_border);
 		}
 	}
 	virtual void DrawSelectedObject() override {

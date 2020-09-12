@@ -154,7 +154,7 @@ public:
 			scr_H = sf::VideoMode::getDesktopMode().height;
 			font = Font();
 			texture = Texture();
-			wnd.create(sf::VideoMode(scr_W, scr_H), "World Editor", sf::Style::None, sf::ContextSettings(0, 0, 8));
+			wnd.create(sf::VideoMode(scr_W, scr_H), "World Editor", sf::Style::Close, sf::ContextSettings(0, 0, 8));
 			cam.reset(sf::FloatRect(0, 0, scr_W, scr_H));
 			cam.setCenter(0, 0);
 			cam_p = cam.getCenter();
