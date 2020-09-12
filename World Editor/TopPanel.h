@@ -71,7 +71,7 @@ public:
 	TopPanel(v2f pos = v2f()) {
 		m_panel_size = v2f(scr_W, 100);
 		if (pos == v2f()) {
-			m_shape = CreateShape(v2f(scr_W/2, 50), m_panel_size, -2, Color(80, 80, 80), Color(40, 40, 40));
+			m_shape = CreateShape(v2f(scr_W/2, 50), m_panel_size, size_panel_out, color_panel_in, color_panel_out);
 			v2f button_size = v2f(48,48);
 			v2f half_size = button_size / 2.f;
 			vec_button.push_back(make_unique<ButtonClickActive>(CreateShape(v2f(2 + half_size.x, 2 + half_size.y), button_size, texture.Edit[0]), "draw"));

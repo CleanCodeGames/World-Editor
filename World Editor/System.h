@@ -190,9 +190,25 @@ public:
 	static const string btncmd_Flying;
 	static const string btncmd_Region;
 
+	static Color color_cell_in;
+	static Color color_cell_out;
+	static Color color_panel_in;
+	static Color color_panel_out;
+
+	static const int size_panel_out;
+	static const int size_cell_out;
+
 	private:
 		static sf::Clock clock;
 };
+
+const int B::size_cell_out = -1;
+const int B::size_panel_out = -2;
+
+Color B::color_cell_in = Color(100, 100, 100, 100);
+Color B::color_cell_out = Color(45, 70, 45);
+Color B::color_panel_in = Color(80, 80, 80);
+Color B::color_panel_out = Color(40, 40, 40);
 
 const string B::btncmd_Terrain			= "Terrain_";
 const string B::btncmd_Grass			= "Grass_";

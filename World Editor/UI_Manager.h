@@ -124,7 +124,7 @@ public:
 				panel_position = m_panel_object->GetPosition();
 
 				// Переключение панели расстановки объектов
-				if (IsKeyPressed(Key::Num1))	m_panel_object = std::move(make_unique<PanelObjectTerrain>(panel_position));
+				if (IsKeyPressed(Key::Num1))		m_panel_object = std::move(make_unique<PanelObjectTerrain>(panel_position));
 				else if (IsKeyPressed(Key::Num2))	m_panel_object = std::move(make_unique<PanelObjectGrass>(panel_position));
 				else if (IsKeyPressed(Key::Num3))	m_panel_object = std::move(make_unique<PanelObjectBorder>(panel_position));
 				else if (IsKeyPressed(Key::Num4))	m_panel_object = std::move(make_unique<PanelObjectDestructible>(panel_position));

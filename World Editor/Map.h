@@ -19,9 +19,6 @@ private:
 	bool m_is_created = false;				// Была ли карта создана
 	bool m_is_mouse_left_pressed = false;	// Если ЛКМ зажата
 	bool m_is_mouse_right_pressed = false;	// Если ПКМ зажата
-	
-	Color m_color_empty_cell = Color(100, 100, 100, 100);
-	Color m_color_cell_out = Color(45, 70, 45);
 
 	UI_Manager m_ui_manager;	// Менеджер интерфейса
 	// Ссылка на переключающийся режим верхней панели редактора
@@ -43,7 +40,7 @@ public:
 		m_size = size;
 		m_name = name;
 
-		m_shape_pick_cell = CreateShape(v2f(0, 0), v2f(CELL_SIZE, CELL_SIZE), -1, Color::Transparent, Color::Green);
+		m_shape_pick_cell = CreateShape(v2f(0, 0), v2f(CELL_SIZE, CELL_SIZE), size_cell_out, Color::Transparent, Color::Green);
 
 		// Если карта уже была создана то чистим её
 		if (m_is_created) {
@@ -57,7 +54,8 @@ public:
 			for (int j = 0; j < m_size.x; j++) {
 				for (int x = 0; x < Layer::ALL; x++) {
 					m_vec_cell[x].push_back(Cell(v2f(j, i) * CELL_SIZE, x));
-					m_vec_object[x].push_back(make_unique<GameObject>(CreateShape(m_vec_cell[x].back().GetPosition(), v2f(CELL_SIZE, CELL_SIZE), -1, m_color_empty_cell, m_color_cell_out), x, "Empty"));
+					m_vec_object[x].push_back(make_unique<GameObject>(CreateShape(m_vec_cell[x].back().GetPosition(), 
+						v2f(CELL_SIZE, CELL_SIZE), size_cell_out, color_cell_in, color_cell_out), x, "Empty"));
 				}
 			}
 		}
@@ -96,13 +94,13 @@ public:
 	void ActTransperentEmptyCell() {
 		if (IsKeyPressed(Key::T)) { 
 			m_ui_manager.m_is_transparent_empty_cell = !m_ui_manager.m_is_transparent_empty_cell;
-			if (m_ui_manager.m_is_transparent_empty_cell) m_color_empty_cell = Color::Transparent;
-			else m_color_empty_cell = Color(100, 100, 100, 100);
+			if (m_ui_manager.m_is_transparent_empty_cell) color_cell_in = Color::Transparent;
+			else color_cell_in = Color(100, 100, 100, 100);
 
 			for (int i = 0; i < m_layer.ALL; i++) {
 				for (auto& object : m_vec_object[i]) {
 					if (object->GetNameID() == "Empty") {
-						object->GetShape().setFillColor(m_color_empty_cell);
+						object->GetShape().setFillColor(color_cell_in);
 					}
 				}
 			}
@@ -113,11 +111,11 @@ public:
 	void ActTransparentGreedCell() {
 		if (IsKeyPressed(Key::G)) { 
 			m_ui_manager.m_is_show_greed_cell = !m_ui_manager.m_is_show_greed_cell;
-			if (m_ui_manager.m_is_show_greed_cell) m_color_cell_out = Color(45, 70, 45);
-			else m_color_cell_out = Color::Transparent;
+			if (m_ui_manager.m_is_show_greed_cell) color_cell_out = Color(45, 70, 45);
+			else color_cell_out = Color::Transparent;
 			for (int i = 0; i < m_layer.ALL; i++) {
 				for (auto& object : m_vec_object[i]) {
-					object->GetShape().setOutlineColor(m_color_cell_out);
+					object->GetShape().setOutlineColor(color_cell_out);
 				}
 			}
 		}
@@ -208,7 +206,7 @@ public:
 						else if (m_is_mouse_right_pressed) {
 							if (object->GetNameID() != "Empty") {
 								object = std::move(make_unique<GameObject>(
-									CreateShape(GetFocusCellPosition(), v2f(CELL_SIZE, CELL_SIZE), -1, m_color_empty_cell, m_color_cell_out), m_layer.get, "Empty"));
+									CreateShape(GetFocusCellPosition(), v2f(CELL_SIZE, CELL_SIZE), size_cell_out, color_cell_in, color_cell_out), m_layer.get, "Empty"));
 							}
 						}
 					}

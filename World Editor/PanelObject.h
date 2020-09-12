@@ -117,16 +117,16 @@ public:
 		if (pos == v2f()) head_position = v2f(scr_W - head_size.x / 2, head_size.y / 2 + 98);
 		else head_position = pos;
 		panel_position = v2f(head_position.x, head_position.y + (head_size.y / 2) + (panel_size.y / 2) - 2);
-		m_shape_head = CreateShape(head_position, head_size, -2, Color(80, 80, 80), Color(40, 40, 40));
-		m_shape = CreateShape(panel_position, panel_size, -2, Color(80, 80, 80), Color(40, 40, 40));
+		m_shape_head = CreateShape(head_position, head_size, size_panel_out, color_panel_in, color_panel_out);
+		m_shape = CreateShape(panel_position, panel_size, size_panel_out, color_panel_in, color_panel_out);
 		m_is_object_picked = true;
-		m_selected_object = std::move(make_unique<GameObjectTerrain>(CreateShape(cur_p, v2f(CELL_SIZE, CELL_SIZE), -1, Color(80, 80, 255, 100), Color(40, 40, 40)), Layer::terrain, btncmd_Terrain + to_string(0)));
+		m_selected_object = std::move(make_unique<GameObjectTerrain>(CreateShape(cur_p, v2f(CELL_SIZE, CELL_SIZE), size_cell_out, color_cell_in, color_cell_out), Layer::terrain, btncmd_Terrain + to_string(0)));
 		m_selected_object->GetShape().setScale(0.75, 0.75);
 		for (int i = 0; i < 10; i++)
 			for (int j = 0; j < 5; j++)
 				m_vec_button_pos.push_back(v2f(head_position.x - (head_size.x / 2) + (50 * j) + 26, (head_position.y + 75) + (50 * i) - 36));
 		ButtonPositionUpdate();
-		shape_picked_border = CreateShape(m_vec_button_pos[0], v2f(48, 48), -2, Color::Transparent, Color::Yellow);
+		shape_picked_border = CreateShape(m_vec_button_pos[0], v2f(48, 48), size_panel_out, Color::Transparent, Color::Yellow);
 	}
 
 	virtual void Update() override {
