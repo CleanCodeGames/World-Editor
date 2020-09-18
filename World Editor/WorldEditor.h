@@ -16,7 +16,9 @@ public:
 	WorldEditor() : B("init"), state(STATE::LAUNCHER) {
 		while (wnd.isOpen()) 
 		{
-			SystemUpdate();
+			System::SystemUpdate();
+			BlinkLineOnTextBox::Update();
+			
 			while(wnd.pollEvent(event)) 
 			{
 				CloseEvent();

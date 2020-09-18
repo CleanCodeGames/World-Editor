@@ -1,5 +1,6 @@
 #pragma once
 #include"Button.h"
+#include"TextBox.h"
 
 class PanelObjectCreator : public B
 {

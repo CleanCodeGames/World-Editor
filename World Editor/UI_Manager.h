@@ -52,7 +52,11 @@ public:
 	bool m_is_transparent_empty_cell = false;
 	bool m_is_show_greed_cell = true;
 
+	unique_ptr<TextBox> m_text_box_test[2];
+
 	UI_Manager() {
+		m_text_box_test[0] = std::move(make_unique<TextBox>(TextBox(v2f(scr_W / 2, scr_H / 2), v2f(128, 24), "test_value", "default_value")));
+		m_text_box_test[1] = std::move(make_unique<TextBox>(TextBox(v2f(scr_W / 2, scr_H / 2 + 26), v2f(128, 24), "test_value", "default_value")));
 		m_panel_object = std::move(make_unique<PanelObjectTerrain>());
 		m_panel_top = std::move(make_unique<TopPanel>());
 		m_panel_object_creator = std::move(make_unique<PanelObjectCreator>());
@@ -110,11 +114,16 @@ public:
 		}
 		// Экранная обработка
 		wnd.setView(cam);
+		m_text_box_test[0]->Update();
+		m_text_box_test[1]->Update();
 		m_panel_object->UpdateSelectedObject();
+		BlinkLineOnTextBox::Update();
 	}
 
 	void Action() {
 		wnd.setView(wnd.getDefaultView());
+		m_text_box_test[0]->Action();
+		m_text_box_test[1]->Action();
 		m_panel_top->Action();
 		static v2f panel_position; // Вспомогательная переменная позиции панели при смене типа
 
@@ -225,6 +234,8 @@ public:
 		wnd.draw(m_text_show_greed);
 		wnd.draw(m_text_empty_cell);
 		wnd.draw(m_text_fps_counter);
+		m_text_box_test[0]->Draw();
+		m_text_box_test[1]->Draw();
 		wnd.setView(cam);
 	}
 

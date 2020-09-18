@@ -27,6 +27,7 @@ private:
 public:
 
 	Shape m_shape_pick_cell;
+	
 
 	Map(v2i size, string name) {
 		Create(size, name);
