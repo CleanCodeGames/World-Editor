@@ -1,7 +1,7 @@
 #pragma once
 #include "PanelObject.h"
 #include "TopPanel.h"
-#include "PanelObjectConctructor.h"
+#include "PanelObjectCreator.h"
 
 class UI_Manager : public B
 {
@@ -117,7 +117,7 @@ public:
 		m_text_box_test[0]->Update();
 		m_text_box_test[1]->Update();
 		m_panel_object->UpdateSelectedObject();
-		BlinkLineOnTextBox::Update();
+		TextBoxEditHelper::Update();
 	}
 
 	void Action() {

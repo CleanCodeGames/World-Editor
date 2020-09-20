@@ -17,7 +17,7 @@ public:
 		while (wnd.isOpen()) 
 		{
 			System::SystemUpdate();
-			BlinkLineOnTextBox::Update();
+			TextBoxEditHelper::Update();
 			
 			while(wnd.pollEvent(event)) 
 			{

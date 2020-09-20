@@ -58,9 +58,6 @@
     <ClInclude Include="WorldSetting.h">
       <Filter>Файлы заголовков\Map</Filter>
     </ClInclude>
-    <ClInclude Include="PanelObjectConctructor.h">
-      <Filter>Файлы заголовков\UI</Filter>
-    </ClInclude>
     <ClInclude Include="TopPanel.h">
       <Filter>Файлы заголовков\UI</Filter>
     </ClInclude>
@@ -71,6 +68,9 @@
       <Filter>Файлы заголовков\System</Filter>
     </ClInclude>
     <ClInclude Include="TextBox.h">
+      <Filter>Файлы заголовков\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="PanelObjectCreator.h">
       <Filter>Файлы заголовков\UI</Filter>
     </ClInclude>
   </ItemGroup>

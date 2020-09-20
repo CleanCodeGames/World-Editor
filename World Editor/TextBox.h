@@ -2,13 +2,19 @@
 #include "System.h"
 
 // Мигающая палочка для активного текстбокса
-class BlinkLineOnTextBox : public B {
+class TextBoxEditHelper : public B {
 public:
-	static short timer_blink;
-	static Shape shape_blink_line;
 
-	BlinkLineOnTextBox() {
+	static short timer_blink;		// Время мигания палочки
+	static Shape shape_blink_line;	// Сама палочка
+	static size_t char_position;	// Номер символа в строке (позиция) для вставки при вводе текста
+	static sf::Text text_left;		// Левая часть текста (до выделенного)
+	static sf::Text text_middle;	// Средняя часть текста (выделенная)
+	static string value_left;		// Содержание строки левой части текста (до выделенного)
+	static string value_middle;		// Содержание строки средней части текста (выделенной)
+	static bool is_left_mouse_pressed;	// Если клик мышки зажат при выделение участка текста
 
+	TextBoxEditHelper() {
 	}
 
 	static void Reset(v2f pos, int height) {
@@ -24,27 +30,37 @@ public:
 	}
 };
 
-short BlinkLineOnTextBox::timer_blink;
-Shape BlinkLineOnTextBox::shape_blink_line;
+short	 TextBoxEditHelper::timer_blink;
+Shape	 TextBoxEditHelper::shape_blink_line;
+size_t	 TextBoxEditHelper::char_position;
+sf::Text TextBoxEditHelper::text_left;
+sf::Text TextBoxEditHelper::text_middle;
+string	 TextBoxEditHelper::value_left;
+string	 TextBoxEditHelper::value_middle;
+bool	 TextBoxEditHelper::is_left_mouse_pressed = false;
 
 class TextBox : public B
 {
+private:
+
+	using TBEH = TextBoxEditHelper;
+
 protected:
 
 	Shape m_shape_box;
 	sf::Text m_text;
 	bool m_is_picked = false;
 	string m_value;
-	const string DEFAULT_VALUE;
+	const string m_value_default;
 	const string m_data_id;
 
 public:
 
-	TextBox(v2f pos, v2f siz, const string data_id = "", const string value = "") : DEFAULT_VALUE(value), m_data_id(data_id) {
+	TextBox(v2f pos, v2f siz, const string data_id = "", const string value = "") : m_value_default(value), m_data_id(data_id) {
 		m_shape_box = CreateShape(pos, siz, -1, Color(150, 150, 150), Color(40, 40, 40));
-		m_text = CreateText(v2f(pos.x - (m_shape_box.getSize().x / 2) + 2, pos.y), siz.y - 8, DEFAULT_VALUE, font.erica_type, Color::Black);
+		m_text = CreateText(v2f(pos.x - (m_shape_box.getSize().x / 2) + 2, pos.y), siz.y - 8, m_value_default, font.erica_type, Color::Black);
 		m_text.setOrigin(0, (siz.y - 8) / 2);
-		m_value = DEFAULT_VALUE;
+		m_value = m_value_default;
 	}
 
 	virtual void Update() {
@@ -52,48 +68,76 @@ public:
 	}
 
 	virtual void Action() {
-		static size_t d_char_position = 0;
-		static sf::Text d_text;
-		static string d_value;
-
 		if (IsMousePressed(sf::Mouse::Left)) {
 			m_is_picked = false;
 			if (IsContains(m_shape_box, cur_p_wnd)) {
-				d_value = "";
-				d_text = m_text;
-				d_text.setString(d_value);
-				for (auto c : m_text.getString()) 
+				TBEH::value_left = "";
+				TBEH::text_left = m_text;
+				TBEH::text_left.setString(TBEH::value_left);
+
+				for (auto c : m_value)
 				{
-					if (d_text.getPosition().x + d_text.getGlobalBounds().width < cur_p_wnd.x) {
-						d_value += c;
-						d_text.setString(d_value);
-						BlinkLineOnTextBox::Reset(v2f(d_text.getPosition().x + d_text.getGlobalBounds().width, m_shape_box.getPosition().y), m_shape_box.getSize().y - 6);
+					if (TBEH::text_left.getPosition().x + TBEH::text_left.getGlobalBounds().width < cur_p_wnd.x) {
+						TBEH::value_left += c;
+						TBEH::text_left.setString(TBEH::value_left);
+						TBEH::Reset(v2f(TBEH::text_left.getPosition().x + TBEH::text_left.getGlobalBounds().width, m_shape_box.getPosition().y), m_shape_box.getSize().y - 6);
 					}
-					else if (m_value == d_value) {
-						BlinkLineOnTextBox::Reset(v2f(m_text.getPosition().x + m_text.getGlobalBounds().width, m_shape_box.getPosition().y), m_shape_box.getSize().y - 6);
+					else if (m_value == TBEH::value_left) {
+						TBEH::Reset(v2f(m_text.getPosition().x + m_text.getGlobalBounds().width, m_shape_box.getPosition().y), m_shape_box.getSize().y - 6);
 						break;
 					}
-					else if (d_value == "") {
-						BlinkLineOnTextBox::Reset(v2f(m_text.getPosition().x, m_shape_box.getPosition().y), m_shape_box.getSize().y - 6);
+					else if (TBEH::value_left == "") {
+						TBEH::Reset(v2f(m_text.getPosition().x, m_shape_box.getPosition().y), m_shape_box.getSize().y - 6);
 						break;
 					}
 				}
-				d_char_position = d_value.length();
+				TBEH::char_position = TBEH::value_left.length();
+				TBEH::is_left_mouse_pressed = true;
 				m_is_picked = true;
 			}
 		}
 
 		if (m_is_picked) {
+			if (IsMouseReleased(sf::Mouse::Left)) {
+				TBEH::value_middle = "";
+				TBEH::text_middle = m_text;
+				TBEH::text_middle.setString(TBEH::value_middle);
+				TBEH::is_left_mouse_pressed = false;
+			}
+
+			if (IsKeyPressed(Key::Left)) {
+				if (!TBEH::value_left.empty()) {
+					TBEH::value_left.pop_back();
+					TBEH::char_position = TBEH::value_left.length();
+					TBEH::text_left.setString(TBEH::value_left);
+					TBEH::Reset(v2f(TBEH::text_left.getPosition().x + TBEH::text_left.getGlobalBounds().width, m_shape_box.getPosition().y), m_shape_box.getSize().y - 6);
+				}
+				else {
+					TBEH::value_left = "";
+				}
+			}
+			if (IsKeyPressed(Key::Right)) {
+				if (TBEH::value_left != m_value) {
+					TBEH::value_left.push_back(m_value[TBEH::char_position]);
+					TBEH::text_left.setString(TBEH::value_left);
+					TBEH::char_position = TBEH::value_left.length();
+					TBEH::Reset(v2f(TBEH::text_left.getPosition().x + TBEH::text_left.getGlobalBounds().width, m_shape_box.getPosition().y), m_shape_box.getSize().y - 6);
+				}
+				else {
+					TBEH::value_left = m_value;
+				}
+			}
+
 			if (event.type == sf::Event::TextEntered) {
 				if (event.text.unicode < 128) {
 					if (event.text.unicode == 8) {
 						if (!m_value.empty()) {
-							if (d_char_position > 0) {
-								m_value.erase(d_char_position - 1, 1);
-								d_value.erase(d_char_position - 1, 1);
-								d_text.setString(d_value);
-								BlinkLineOnTextBox::Reset(v2f(d_text.getPosition().x + d_text.getGlobalBounds().width, m_shape_box.getPosition().y), m_shape_box.getSize().y - 6);
-								d_char_position--;
+							if (TBEH::char_position > 0) {
+								m_value.erase(TBEH::char_position - 1, 1);
+								TBEH::value_left.erase(TBEH::char_position - 1, 1);
+								TBEH::text_left.setString(TBEH::value_left);
+								TBEH::Reset(v2f(TBEH::text_left.getPosition().x + TBEH::text_left.getGlobalBounds().width, m_shape_box.getPosition().y), m_shape_box.getSize().y - 6);
+								TBEH::char_position--;
 							}
 						}
 						else {
@@ -101,16 +145,16 @@ public:
 						}
 					}
 					else { // Если вводим текст
-						d_value += event.text.unicode;
-						d_char_position++;
-						d_text.setString(d_value);
-						m_value.insert(d_value.length()-1, &d_value.back());
-						BlinkLineOnTextBox::Reset(v2f(d_text.getPosition().x + d_text.getGlobalBounds().width, m_shape_box.getPosition().y), m_shape_box.getSize().y - 6);
+						TBEH::value_left += event.text.unicode;
+						TBEH::char_position++;
+						TBEH::text_left.setString(TBEH::value_left);
+						m_value.insert(TBEH::value_left.length() - 1, &TBEH::value_left.back());
+						TBEH::Reset(v2f(TBEH::text_left.getPosition().x + TBEH::text_left.getGlobalBounds().width, m_shape_box.getPosition().y), m_shape_box.getSize().y - 6);
 					}
 					m_text.setString(m_value);
 				}
 				else {
-					BlinkLineOnTextBox::Reset(v2f(m_text.getPosition().x + m_text.getGlobalBounds().width, m_shape_box.getPosition().y), m_shape_box.getSize().y - 6);
+					TBEH::Reset(v2f(m_text.getPosition().x + m_text.getGlobalBounds().width, m_shape_box.getPosition().y), m_shape_box.getSize().y - 6);
 				}
 			}
 		}
@@ -119,8 +163,8 @@ public:
 	virtual void Draw() {
 		wnd.draw(m_shape_box);
 		wnd.draw(m_text);
-		if (m_is_picked) 
-			wnd.draw(BlinkLineOnTextBox::shape_blink_line);
+		if (m_is_picked)
+			wnd.draw(TBEH::shape_blink_line);
 	}
 
 	void SetData(string data) {
