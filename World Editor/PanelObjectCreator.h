@@ -36,6 +36,7 @@ public:
 
 	vector <unique_ptr<ButtonClickActive>> m_vec_button;
 
+
 	PanelObjectCreator(v2f pos = v2f()) {
 
 		if (pos == v2f()) m_head_position = v2f(scr_W - m_head_size.x / 2, m_head_size.y / 2 + 98);

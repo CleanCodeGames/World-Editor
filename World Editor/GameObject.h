@@ -11,6 +11,7 @@ enum class TypeGameObject {
 	Flying			= 6U, 
 	Region			= 7U
 };
+
 class AbstractGameObject : public B
 {
 protected:
@@ -37,6 +38,7 @@ public:
 	virtual void Draw() = 0;
 	virtual ~AbstractGameObject() = default;
 };
+
 class GameObject : public AbstractGameObject
 {
 private:
@@ -58,6 +60,7 @@ public:
 	virtual ~GameObject() override {
 	}
 };
+
 class GameObjectTerrain : public AbstractGameObject
 {
 private:
@@ -79,6 +82,7 @@ public:
 	~GameObjectTerrain() override {
 	}
 };
+
 class GameObjectDestructible : public AbstractGameObject
 {
 private:
@@ -100,6 +104,7 @@ public:
 	~GameObjectDestructible() override {
 	}
 };
+
 class GameObjectDecor : public AbstractGameObject
 {
 private:
@@ -121,6 +126,7 @@ public:
 	~GameObjectDecor() override {
 	}
 };
+
 class GameObjectUnit : public AbstractGameObject
 {
 private:
@@ -142,6 +148,7 @@ public:
 	~GameObjectUnit() override {
 	}
 };
+
 class GameObjectFlying : public AbstractGameObject
 {
 private:
@@ -163,6 +170,7 @@ public:
 	~GameObjectFlying() override {
 	}
 };
+
 class GameObjectRegion : public AbstractGameObject
 {
 private:
