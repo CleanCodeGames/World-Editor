@@ -36,6 +36,32 @@ public:
 		m_size = v2i(32, 32);
 		m_name = "NoName";
 	}
+
+	bool SaveToFile(string fnime) {
+		string path = "maps\\";
+		ofstream file;
+		file.open(path+fnime+".wemap");
+		if (file.is_open()) 
+		{
+			file << "0" << "\n";
+			for (int i = 0; i < m_layer.ALL; i++) {
+				file << "START_LAYER " << i << " : ";
+				for (auto& object : m_vec_object[i]) {
+					file << " { " << object->GetNameID() << " } ";
+					file << " { " << int(object->GetType()) << " } ";
+					file << " : ";
+				}
+				file << "END_LAYER " << i << " :" << "\n";
+			}
+			file.close();
+			return true;
+		}
+		else return false;
+	}
+	bool LoadFromFile(string fname) {
+		return true;
+	}
+
 	void Create(v2i size = v2i(32,32), string name = "NoName")
 	{
 		m_size = size;
@@ -183,7 +209,10 @@ public:
 			}
 			break;
 		case TopPanelMode::HELP: break;
-		case TopPanelMode::SAVE: break;
+		case TopPanelMode::SAVE:
+			if (SaveToFile("test")) cout << "File Save Ok\n";
+			else cout << "File no save\n";
+			break;
 		case TopPanelMode::LOAD: break;
 		case TopPanelMode::EXIT: break;
 		default: break;
