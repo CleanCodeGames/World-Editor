@@ -38,9 +38,10 @@ public:
 	}
 
 	bool SaveToFile(string fnime) {
-		string path = "maps\\";
+		const string path = "maps\\";
+		const string extension = ".wemap";
 		ofstream file;
-		file.open(path+fnime+".wemap");
+		file.open(path + fnime + extension);
 		if (file.is_open()) 
 		{
 			file << "0" << "\n";
