@@ -37,6 +37,7 @@ public:
 	virtual vector<unique_ptr<AbstractButton>>& GetButtonVector() {
 		return vec_button;
 	}
+
 	virtual void DrawSelectedObject() {
 		wnd.draw(m_shape_secelted_mode_ico_on_panel);
 		wnd.draw(m_shape_selected_mode_ico_on_cursor);
