@@ -6,7 +6,11 @@ class System
 {
 public:
 	static const sf::FloatRect GetVisible() {
-		return sf::FloatRect(cam.getCenter().x - (cam.getSize().x / 2), cam.getCenter().y - (cam.getSize().y / 2), cam.getSize().x, cam.getSize().y);
+		return sf::FloatRect(
+			cam.getCenter().x - (cam.getSize().x / 2), 
+			cam.getCenter().y - (cam.getSize().y / 2), 
+			cam.getSize().x, 
+			cam.getSize().y);
 	}
 	static void SystemUpdate() {
 		time = float(clock.getElapsedTime().asMicroseconds()) / 1000.f;
@@ -139,7 +143,7 @@ public:
 			if (event.key.code == code) return true;
 		return false;
 	}
-
+	
 	static bool IsMouseWheelUp(const sf::Mouse::Wheel code)
 	{
 		if (event.mouseWheel.x == code) return true;

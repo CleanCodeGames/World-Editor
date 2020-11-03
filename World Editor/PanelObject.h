@@ -113,6 +113,7 @@ protected:
 	int m_picked_button_num;
 
 public:
+
 	PanelObject(v2f pos = v2f()) {
 		m_type = TypeGameObject::Abstract;
 		m_picked_button_num = 0;
@@ -122,8 +123,10 @@ public:
 		m_shape_head = CreateShape(m_head_position, m_head_size, size_panel_out, color_panel_in, color_panel_out);
 		m_shape_panel = CreateShape(m_panel_position, m_panel_size, size_panel_out, color_panel_in, color_panel_out);
 		m_is_object_picked = true;
-		m_selected_object = std::move(make_unique<GameObjectTerrain>(CreateShape(cur_p, v2f(CELL_SIZE, CELL_SIZE), size_cell_out, color_cell_in, color_cell_out), Layer::terrain, btncmd_Terrain + to_string(0)));
+		m_selected_object = std::move(make_unique<GameObjectTerrain>(
+			CreateShape(cur_p, v2f(CELL_SIZE, CELL_SIZE), size_cell_out, color_cell_in, color_cell_out), Layer::terrain, btncmd_Terrain + to_string(0)));
 		m_selected_object->GetShape().setScale(0.75, 0.75);
+
 		for (int i = 0; i < 10; i++)
 			for (int j = 0; j < 5; j++)
 				m_vec_button_pos.push_back(v2f(m_head_position.x - (m_head_size.x / 2) + (50 * j) + 26, (m_head_position.y + 75) + (50 * i) - 36));

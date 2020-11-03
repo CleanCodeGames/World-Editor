@@ -211,7 +211,7 @@ public:
 			break;
 		case TopPanelMode::HELP: break;
 		case TopPanelMode::SAVE:
-			if (SaveToFile("test")) {
+			if (SaveToFile(m_name)) {
 				cout << "File Save Ok\n";
 				m_ui_manager.m_panel_top->m_top_panel_mode = TopPanelMode::PASTE;
 			}

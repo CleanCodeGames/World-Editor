@@ -100,7 +100,8 @@ public:
 			m_fps_counter = 0;
 		}
 
-		wnd.setView(wnd.getDefaultView());
+		wnd.setView(wnd.getDefaultView());	// Экранная обработка
+		
 		switch (m_panel_top->m_top_panel_mode)
 		{
 			case TopPanelMode::PASTE:
@@ -112,8 +113,8 @@ public:
 				break;
 			default: break;
 		}
-		// Экранная обработка
-		wnd.setView(cam);
+		
+		wnd.setView(cam);					// Конец экранной обработки
 		m_text_box_test[0]->Update();
 		m_text_box_test[1]->Update();
 		m_panel_object->UpdateSelectedObject();

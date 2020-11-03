@@ -34,7 +34,7 @@ protected:
 
 public:
 
-	vector <unique_ptr<ButtonClickActive>> m_vec_button;
+	vector<unique_ptr<AbstractButton>> m_vec_button;
 
 
 	PanelObjectCreator(v2f pos = v2f()) {

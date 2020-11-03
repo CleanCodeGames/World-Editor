@@ -85,6 +85,7 @@ public:
 		m_shape_secelted_mode_ico_on_panel = CreateShape(vec_button[0]->GetShape().getPosition(), vec_button[0]->GetShape().getSize(), -2, Color::Transparent, Color::Yellow);
 		m_shape_selected_mode_ico_on_cursor = CreateShape(cur_p, v2f(vec_button[0]->GetShape().getSize()), texture.Edit[2]);
 	}
+
 	virtual void Update() override {
 		BaseTopPanel::Update();
 		static float alpha_rotation = 0;
@@ -95,7 +96,10 @@ public:
 	virtual void Action() override {
 		for (auto& button : vec_button) {
 			if (button->Action()) {
-				m_shape_secelted_mode_ico_on_panel.setPosition(button->GetShape().getPosition());
+				// Если нажата кнопка сохранить, то не меняем положение шейпа m_shape_secelted_mode_ico_on_panel
+				if (button->GetActionId() != "save") {
+					m_shape_secelted_mode_ico_on_panel.setPosition(button->GetShape().getPosition());
+				}
 				if (button->GetActionId() == "draw") {
 					m_shape_selected_mode_ico_on_cursor = Shape();
 					m_top_panel_mode = TPM::PASTE;

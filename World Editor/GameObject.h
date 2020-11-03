@@ -1,15 +1,15 @@
 #pragma once
 #include "System.h"
 
-enum class TypeGameObject {
-	Abstract		= 0U, 
-	Empty			= 1U, 
-	Terrain			= 2U, 
-	Destructible	= 3U,
-	Decor			= 4U,
-	Unit			= 5U, 
-	Flying			= 6U, 
-	Region			= 7U
+enum class TypeGameObject : uint {
+	Abstract, 
+	Empty, 
+	Terrain, 
+	Destructible,
+	Decor,
+	Unit, 
+	Flying, 
+	Region
 };
 
 class AbstractGameObject : public B
