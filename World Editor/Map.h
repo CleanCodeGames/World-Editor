@@ -39,7 +39,7 @@ public:
 
 	bool SaveToFile(string fnime) {
 		const string path = "maps\\";
-		const string extension = ".wemap";
+		const string extension = ".phmap";
 		ofstream file;
 		file.open(path + fnime + extension);
 		if (file.is_open()) 

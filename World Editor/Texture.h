@@ -24,6 +24,7 @@ public:
 	vector<IMG> Region;
 	vector<IMG> Edit;
 	IMG UI_AddNewObject;
+	IMG BackGroundForMainMenu;
 
 	Texture() {
 		for (int i = 0; i < 50; i++) Terrain.push_back(Load("Map/terrain/terrain" + to_string(i) + ".png"));
@@ -36,6 +37,7 @@ public:
 		for (int i = 0; i < 1; i++) Region.push_back(Load("Map/region/region" + to_string(i) + ".png"));
 		for (int i = 0; i < 7; i++) Edit.push_back(Load("UI/edit" + to_string(i) + ".png"));
 		UI_AddNewObject = Load("UI/AddNewObject.png");
+		BackGroundForMainMenu = Load("UI/Heisenberg.png");
 	}
 
 	~Texture(void) {

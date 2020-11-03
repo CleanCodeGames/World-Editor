@@ -37,7 +37,7 @@ public:
 							state = WorldEditor::STATE::EDITOR;
 							m_world_sttings.SetTypeController(TypeController::RTC);
 							wnd.setSize(sf::Vector2u(scr_W, scr_H));
-							map.Create(v2i(launcher.GetMapSize()), "MapName["+to_string(launcher.GetMapSize().x)+","+ to_string(launcher.GetMapSize().y) +"] - Genre RTC");
+							map.Create(v2i(launcher.GetMapSize()), launcher.GetMapName() + "[" +to_string(launcher.GetMapSize().x)+"],["+ to_string(launcher.GetMapSize().y) +"]");
 						}
 						else if (act == "Load") {
 							cout << "Load!\n";

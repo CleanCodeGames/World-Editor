@@ -50,7 +50,6 @@ class TextBox : public B
 private:
 
 	using TBEH = TextBoxEditHelper;
-	InputType m_input_type;
 
 protected:
 
@@ -61,6 +60,7 @@ protected:
 	const string m_value_default;
 	const string m_data_id;
 	const uint m_max_value;
+	InputType m_input_type;
 
 public:
 
@@ -70,6 +70,7 @@ public:
 		m_data_id(data_id),
 		m_max_value(max_value)
 	{
+		m_input_type = InputType::TEXT;
 		m_shape_box = CreateShape(pos, siz, -1, Color(150, 150, 150), Color(40, 40, 40));
 		m_text = CreateText(v2f(pos.x - (m_shape_box.getSize().x / 2) + 2, pos.y), siz.y - 8, m_value_default, font.erica_type, Color::Black);
 		m_text.setOrigin(0, (siz.y - 8) / 2);
@@ -202,7 +203,7 @@ public:
 
 	TextBoxInt(v2f pos, v2f siz, string data_id = "1", string value = "1", uint max_value = 1024)
 		: TextBox(pos, siz, data_id, value, max_value) {
-
+		m_input_type = InputType::INTEGER;
 	}
 
 	virtual void Action() override {
